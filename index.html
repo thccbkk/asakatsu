@@ -106,6 +106,15 @@
     padding:13px;font-size:16px;color:var(--white);font-family:inherit;
   }
   input:focus,textarea:focus{outline:none;border-color:var(--teal)}
+  /* v3.8: iOSの日付・時刻入力のネイティブ装飾を無効化（枠が二重に見える問題の修正） */
+  input[type=date],input[type=time]{
+    -webkit-appearance:none;appearance:none;
+    min-width:0;max-width:100%;display:block;min-height:48px;text-align:left;
+  }
+  input[type=date]::-webkit-date-and-time-value,
+  input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0}
+  input[type=date]::-webkit-calendar-picker-indicator,
+  input[type=time]::-webkit-calendar-picker-indicator{opacity:.5}
   textarea{resize:vertical;min-height:52px}
   .row2{display:flex;gap:10px}
   .row2>*{flex:1;min-width:0}
@@ -222,8 +231,12 @@
   /* bottom nav */
   nav{
     position:fixed;left:0;right:0;bottom:0;z-index:40;
-    background:rgba(12,13,16,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--line);
+    background:rgba(12,13,16,.96);border-top:1px solid var(--line);
     display:flex;max-width:480px;margin:0 auto;
+    padding-bottom:env(safe-area-inset-bottom);
+    /* v3.8: スクロール時の追従遅延対策 — GPUレイヤーに固定し、重いblurをやめる */
+    transform:translateZ(0);-webkit-transform:translateZ(0);
+    will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden;
   }
   nav button{
     flex:1;background:none;border:none;color:var(--muted2);padding:10px 0 12px;cursor:pointer;
@@ -273,7 +286,7 @@
         <div><span class="n" id="streakN">0</span></div>
         <div class="l">DAY STREAK</div>
         <div class="l2">世界のどこかで朝活継続中<br>Somewhere on Earth, every morning 🌏</div>
-        <img class="hdr-logo" src="data:image/png;base64,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" alt="Thcc swan logo">
+        <img class="hdr-logo" src="data:image/png;base64,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" alt="Thcc swan logo">
       </div>
     </div>
     <div class="datestrip">
@@ -300,8 +313,25 @@
           <div><label class="fld">📍 Where / 拠点</label><input type="text" id="sesSite" placeholder="例：Bangkok" list="siteList"></div>
           <div><label class="fld">✍️ Recorded by / 入力者</label><input type="text" id="sesRecorder" placeholder="あなたの名前 / Your name"></div>
         </div>
-        <div class="chips" id="recorderChips" style="margin:-6px 0 14px"></div>
-        <div style="margin:0 0 14px"><label class="fld">📌 Spot / 場所（任意）— 同じ拠点内でも場所が残ります</label><input type="text" id="sesSpot" placeholder="例：Lumpini Park / ベンジャキティ公園" list="spotList"></div>
+        <!-- v3.8: datalistがiOSで不安定なため、拠点はタップで選べるチップを常時表示 -->
+        <div class="chips" id="siteChips" style="margin:-6px 0 10px"></div>
+        <div class="chips" id="recorderChips" style="margin:0 0 14px"></div>
+        <!-- v3.9: ラン距離（任意）— ソロランナーの積み上げ記録用 -->
+        <div class="row2" style="margin:0 0 14px">
+          <div><label class="fld">📌 Spot / 場所（任意）</label><input type="text" id="sesSpot" placeholder="例：Lumpini Park" list="spotList"></div>
+          <div id="distBox" style="flex:0 0 34%"><label class="fld">🏃 距離 km（任意）</label><input type="number" id="sesDist" step="0.1" min="0" inputmode="decimal" placeholder="5.2"></div>
+        </div>
+        <!-- v4.0: ☕ カフェメモ — COFFEEを選んだ日はカフェ名を残せる（ソロコーヒーの記録もおもろい） -->
+        <div id="cafeBox" style="display:none;margin:0 0 14px">
+          <label class="fld">☕ Cafe / カフェ名（任意）</label>
+          <input type="text" id="sesCafe" placeholder="例：Sarnies Bangkok">
+          <div class="chips" id="cafeChips" style="margin-top:6px"></div>
+        </div>
+        <!-- v4.2: 💪 STRENGTH選択時だけ出る筋トレメニュー（散らからないよう部位チップのみ） -->
+        <div id="strBox" style="display:none;margin:0 0 14px">
+          <label class="fld">💪 筋トレ内容（任意）/ Strength menu</label>
+          <div class="chips" id="strChips"></div>
+        </div>
         <datalist id="spotList"></datalist>
         <datalist id="siteList">
           <option value="Bangkok"></option>
@@ -311,19 +341,36 @@
           <option value="Kanagawa"></option>
         </datalist>
 
+        <!-- v4.3: 初回だけのやさしい案内（✕で二度と出ない） -->
+        <div class="hint" id="helloHint" style="display:none;margin:0 0 12px;line-height:1.7">👋 <b>はじめてでもかんたん</b>：来た人の名前をタップ → 一番下の <b>▶記録する</b>。それだけ。ひとり朝活は <b>⚡ソロ即記録</b> をどうぞ。<span id="helloHintX" style="float:right;cursor:pointer;padding:0 4px;opacity:.7">✕</span></div>
         <label class="fld">Attendance / 参加メンバー <span id="attCount" class="accent-t"></span></label>
         <div class="quick-row">
           <button class="quick-btn tealtxt" id="sameAsLast">↻ 前回と同じ / Same as last</button>
+          <button class="quick-btn" id="soloQuick">⚡ ソロ即記録 / Solo</button>
           <button class="quick-btn" id="clearAtt">クリア / Clear</button>
         </div>
+        <!-- v4.3: ⚡初回だけ「あなたはだれ？」— Myタブを知らなくてもソロ記録が完結する -->
+        <div id="soloWhoBox" style="display:none;margin:0 0 12px">
+          <label class="fld">⚡ あなたはだれ？（この端末で最初の1回だけ）/ Who are you?</label>
+          <div class="chips" id="soloWhoChips"></div>
+        </div>
+        <!-- v4.1: メンバーが増えても選びやすく（1文字打てば絞り込み） -->
+        <input type="text" id="attSearch" placeholder="🔍 名前で絞り込み / Filter names" style="margin:0 0 8px">
         <div class="chips" id="attChips"></div>
         <div id="addMemberBox" style="display:none;margin-top:10px">
-          <input type="text" id="newMemberName" placeholder="新しい人の名前 / New member's name" style="margin-bottom:8px">
+          <input type="text" id="newMemberName" placeholder="名前は詳しく（例：Tetsu Kaga.ice）/ Full-ish name" style="margin-bottom:8px">
           <div class="row2">
-            <label class="chk-inline"><input type="checkbox" id="newMemberJanken" checked> 男気じゃんけんに参加 / Joins Gochi Janken</label>
+            <label class="chk-inline"><input type="checkbox" id="newMemberJanken" checked> GOCHIじゃんけんに参加 / Joins GOCHI Janken</label>
             <button class="quick-btn tealtxt" id="confirmAddMember" style="flex:0 0 84px">追加 / Add</button>
           </div>
-          <div class="mini">女性・子供など奢り対象外の人はチェックを外して登録<span class="dot">。</span>次回から自動で除外されます。<br>間違えたときは、メンバーのチップを<b>長押し</b>すると修正・削除できます。</div>
+          <div class="mini">名前は短くせず詳しめに（人数が増えても区別できるように）<span class="dot">。</span>女性・子供など奢り対象外の人はチェックを外して登録<span class="dot">。</span>次回から自動で除外されます。<br>間違えたときは、メンバーのチップを<b>長押し</b>すると修正・削除できます。</div>
+        </div>
+        <!-- v4.2: 👤 ゲスト — 旅先やランクラブ等、名簿に入れない同行者はここに（名簿を汚さない）
+             v4.3: 普段は1行にたたむ（使わない欄は見せない） -->
+        <div class="mini" id="guestToggle" style="margin-top:10px;cursor:pointer;opacity:.75">＋👤 名簿に入れないゲストがいる / Add guests</div>
+        <div class="row2" id="guestBox" style="margin-top:10px;display:none">
+          <div style="flex:0 0 30%"><label class="fld">👤 ゲスト人数</label><input type="number" id="sesGuestN" min="0" inputmode="numeric" placeholder="0"></div>
+          <div><label class="fld">ゲストメモ（名簿に入れない同行者・任意）</label><input type="text" id="sesGuestNote" placeholder="例：大阪ランクラブの3人と"></div>
         </div>
 
         <div style="height:18px"></div>
@@ -334,8 +381,8 @@
 
         <div style="height:18px"></div>
 
-        <label class="fld">🥊 Gochi Janken ｜ 男気じゃんけん 参加者</label>
-        <div class="hint" style="margin-bottom:6px">普通のじゃんけんとは逆。<b>勝った人がみんなに奢る</b>——それが男気（OTOKO＝漢）。☕コーヒーが定番、🍦アイスもOK。負けても失うものなし、勝ったら誇りと小銭を差し出せ。参加は自由（やらない日もOK）。<br>Rock-paper-scissors — reversed. <b>The WINNER pays for everyone.</b> That's <i>Otoko-gi</i> (漢 = spirit of a true MAN). Usually coffee, ice cream counts too. Lose and you get a free drink; win and you earn glory (and the bill). Join if you dare — totally optional.</div>
+        <label class="fld">🥊 GOCHI Janken ｜ GOCHIじゃんけん 参加者</label>
+        <div class="hint" style="margin-bottom:6px">普通のじゃんけんとは逆。<b>勝った人がみんなに奢る</b>——それがGOCHI（ご馳走の心）。☕コーヒーが定番、🍦アイスもOK。負けても失うものなし、勝ったら誇りと小銭を差し出せ。参加は自由（やらない日もOK）。<br>Rock-paper-scissors — reversed. <b>The WINNER pays for everyone.</b> That's <i>GOCHI</i> — the spirit of treating. Usually coffee, ice cream counts too. Lose and you get a free drink; win and you earn glory (and the bill). Join if you dare — totally optional.</div>
         <div class="chips" id="jankenPartChips"></div>
 
         <div style="height:14px"></div>
@@ -347,6 +394,9 @@
         </div>
 
         <div style="height:18px"></div>
+
+        <!-- v4.2: 🔒 ひっそり記録 — 投稿・ランキングに出したくない人のために -->
+        <label class="chk-inline" style="display:block;margin:0 0 12px"><input type="checkbox" id="sesHush"> 🔒 ひっそり記録（Discord投稿・ランキングに出さない）/ Keep it quiet</label>
 
         <label class="fld">NOTE — アサカツ㌔ク。</label>
         <textarea id="sesNote" placeholder="今朝のひとこと、MENU詳細（走った距離、Rep数など、なんでもアサカツキロク。）/ Today's word, distance, reps — anything!"></textarea>
@@ -375,6 +425,11 @@
     <div class="card" id="doneState" style="display:none">
       <div class="sec-h"><span class="bar"></span><span class="t">Post</span><span class="jp">きょうの投稿</span></div>
       <div class="hint" id="todayDoneInfo" style="margin-bottom:10px"></div>
+      <!-- v3.7: 複数記録がある日はどれを投稿するか選ぶ（写真・Discord・画像・X・Threads全てに連動） -->
+      <div id="postRecBox" style="display:none;margin-bottom:10px">
+        <div class="hint" style="margin-bottom:6px">投稿する記録を選択（写真・📣・📸・𝕏・🧵 すべてに反映）/ Select record to post:</div>
+        <div class="chips" id="postRecChips"></div>
+      </div>
       <div id="attachBox" style="margin-bottom:10px">
         <input type="file" id="attachInput" accept="image/*,video/*" multiple style="display:none">
         <button class="cta ghost" id="attachBtn"><span>📷 写真・動画をつける / Add photos & videos</span></button>
@@ -417,6 +472,19 @@
       <div class="tile"><span class="n r" id="stTreat">฿0</span><div class="l">奢り総額</div></div>
     </div>
 
+    <!-- v3.9: ランキング（月間参加・連続日数・GOCHI殿堂） -->
+    <div class="card">
+      <div class="sec-h"><span class="bar"></span><span class="t">Ranking</span><span class="jp">みんなの積み上げ</span></div>
+      <div class="hint" style="margin-bottom:6px;font-weight:800">🏅 月間参加 / Monthly joins</div>
+      <div id="rankMonthList"></div>
+      <div class="hint" style="margin:14px 0 6px;font-weight:800">🔥 連続日数（現在）/ Current streak</div>
+      <div id="rankStreakList"></div>
+      <div class="hint" style="margin:14px 0 6px;font-weight:800">🥊 GOCHI殿堂（通算）/ All-time treats</div>
+      <div id="rankTreatAllList"></div>
+      <div class="hint" style="margin:14px 0 6px;font-weight:800">☕ 各地のカフェ / Coffee spots worldwide</div>
+      <div id="cafeMapList"></div>
+    </div>
+
     <div class="card">
       <div class="sec-h"><span class="bar r"></span><span class="t">Treat Ranking</span><span class="jp">今月の奢り</span></div>
       <div id="treatList"></div>
@@ -437,12 +505,12 @@
     <div class="tiles">
       <div class="tile"><span class="n t" id="pgSessions">0</span><div class="l">開催 Sessions</div></div>
       <div class="tile"><span class="n" id="pgAttend">0</span><div class="l">のべ参加 Joins</div></div>
-      <div class="tile"><span class="n r" id="pgTreat">฿0</span><div class="l">男気総額 Treats</div></div>
+      <div class="tile"><span class="n r" id="pgTreat">฿0</span><div class="l">GOCHI総額 Treats</div></div>
     </div>
     <div class="mini" id="pgSites" style="margin:-6px 0 12px;text-align:center"></div>
 
     <div class="card">
-      <div class="sec-h"><span class="bar r"></span><span class="t">Otokogi</span><span class="jp">男気途中経過まとめ</span></div>
+      <div class="sec-h"><span class="bar r"></span><span class="t">GOCHI</span><span class="jp">GOCHI途中経過まとめ</span></div>
       <div id="pgTreatList"></div>
     </div>
 
@@ -501,7 +569,7 @@
     <div class="card">
       <div class="sec-h"><span class="bar"></span><span class="t">Add Member</span><span class="jp">メンバー登録</span></div>
       <div class="row2">
-        <input type="text" id="crewNewName" placeholder="名前を入力 / Name" style="flex:3">
+        <input type="text" id="crewNewName" placeholder="名前は詳しく（例：Tetsu Kaga.ice）" style="flex:3">
         <button class="quick-btn tealtxt" id="crewAddBtn" style="flex:1">追加 / Add</button>
       </div>
       <div class="mini">一度来た人は自動でここに残り、次回からタップで選べます。/ Members stay here after their first visit.</div>
@@ -509,6 +577,7 @@
 
     <div class="card flat">
       <div class="sec-h"><span class="bar r"></span><span class="t">The Crew</span><span class="jp" id="crewCount"></span></div>
+      <input type="text" id="crewSearch" placeholder="🔍 名前で絞り込み / Filter names" style="margin:0 0 10px">
       <div class="toggle-row">
         <button id="sortAtt" class="on">参加回数順 / by Joins</button>
         <button id="sortTreat">奢り額順 / by Treats</button>
@@ -532,6 +601,12 @@
       <input type="text" id="cfgWebhook" placeholder="https://discord.com/api/webhooks/...">
       <div class="hint" style="margin-top:8px">Discordのチャンネル設定 → 連携サービス → ウェブフックを作成 → URLをコピー。<br><span class="accent-t">共有のコツ：</span>後でこのファイルをネットに置くなら、コード先頭の <b>BUILTIN_WEBHOOK</b> に貼れば、URLを配るだけで全員が同じチャンネルに投稿できます（各自設定不要）。</div>
       <button class="cta ghost" id="testDiscord" style="margin-top:12px;font-size:16px"><span>テスト送信 / Test post</span></button>
+    </div>
+
+    <div class="card">
+      <div class="sec-h"><span class="bar"></span><span class="t">Privacy</span><span class="jp">見せ方</span></div>
+      <label class="chk-inline" style="display:block"><input type="checkbox" id="cfgPrivacy"> 🔒 プライバシーモード：個人ランキングと名簿の詳細（参加回数・GOCHI額）は ⭐スペシャリスト（参加30回〜）だけが見られる</label>
+      <div class="hint" style="margin-top:8px">ノリさんの奥さんのように「自分のメモとして使いたい」人が増えたら ON に。OFF に戻せばいつでも全員に公開されます（あとから何度でも調整可）。個別の記録は 🔒ひっそり記録 でも隠せます。</div>
     </div>
 
     <div class="card">
@@ -560,7 +635,7 @@
     </div>
   </section>
 
-  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v3.6 Final 🌏</span></footer>
+  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.3 Final 🌏</span></footer>
 </div>
 
 <div id="updBar" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:99;background:var(--teal);color:#06232a;font-weight:800;padding:12px 14px;border-radius:12px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.5);cursor:pointer"></div>
@@ -584,6 +659,7 @@
     <div class="share-btns">
       <button class="cta teal" id="mvRename"><span>✏️ この名前に修正 / Rename</span></button>
       <button class="cta ghost" id="mvJanken"><span>♀/子（じゃんけん除外）を切替 / Toggle janken</span></button>
+      <button class="cta ghost" id="mvSpec"><span>⭐ パワー継承（スペシャリスト認定）/ Grant power</span></button>
       <button class="cta ghost" id="mvDelete"><span>🗑 メンバーを削除 / Remove</span></button>
       <button class="cta ghost" id="mvClose"><span>✕ 閉じる / Close</span></button>
     </div>
@@ -615,11 +691,20 @@
     <div style="margin-top:16px;font-weight:900;letter-spacing:.08em">🔥 使い方 / HOW TO — 3 STEPS</div>
     <div class="hint" style="margin-top:6px;line-height:1.7"><b>1. 記録 LOG</b>：日付・拠点・参加メンバーを選んで ▶ SAVE。一人朝活もOK。<br><b>1.</b> Pick date, place & members, hit SAVE. Solo mornings count too.<br><br><b>2. 投稿 POST</b>：📣 でDiscordへ報告。📷 写真・動画も一緒に送れる。<br><b>2.</b> Post your report to Discord — photos & videos welcome.<br><br><b>3. 継続 REPEAT</b>：あとは続けるだけ。streakを絶やすな。<br><b>3.</b> Then just keep showing up. Don't break the streak.</div>
 
-    <div style="margin-top:16px;font-weight:900;letter-spacing:.08em">🥊 GOCHI JANKEN / 男気じゃんけん</div>
-    <div class="hint" style="margin-top:6px;line-height:1.7">普通のじゃんけんとは逆——<b>勝った人がみんなに奢る</b>。それが男気（OTOKO＝漢）。☕コーヒーが定番、🍦アイスもOK。参加は自由。<br>Rock-paper-scissors, reversed: <b>the WINNER pays for everyone</b>. That's <i>Otoko-gi</i> — the spirit of a true MAN（漢）. Usually coffee, sometimes ice cream. Lose = free drink. Win = glory + the bill. Optional, always.</div>
+    <div style="margin-top:16px;font-weight:900;letter-spacing:.08em">🥊 GOCHI JANKEN / GOCHIじゃんけん</div>
+    <div class="hint" style="margin-top:6px;line-height:1.7">普通のじゃんけんとは逆——<b>勝った人がみんなに奢る</b>。それがGOCHI（ご馳走の心）。☕コーヒーが定番、🍦アイスもOK。参加は自由。<br>Rock-paper-scissors, reversed: <b>the WINNER pays for everyone</b>. That's <i>GOCHI</i> — the spirit of treating. Usually coffee, sometimes ice cream. Lose = free drink. Win = glory + the bill. Optional, always.</div>
+
+    <div style="margin-top:16px;font-weight:900;letter-spacing:.08em">⭐ 朝活スペシャリスト / SPECIALIST</div>
+    <div class="hint" style="margin-top:6px;line-height:1.7">朝活に<b>30回</b>参加すると「⭐ 朝活スペシャリスト」に認定。メンバー追加や布教活動など、運営に関わるパワーを持てる。さらにスペシャリストは<b>パワー継承</b>で、認めた仲間に自分のパワーを分け与えられる——受け継がれたパワーが、朝活地球を広げていく。<br>Show up <b>30 times</b> and you become an <b>Asakatsu Specialist</b> ⭐ — trusted with crew management and spreading the movement. Specialists can also <b>pass their power on</b> to members they believe in. The power spreads, the mornings grow.</div>
+
+    <div style="margin-top:16px;font-weight:900;letter-spacing:.08em">🧩 じぶん仕様の入力 / YOUR STYLE, YOUR INPUTS</div>
+    <div class="hint" style="margin-top:6px;line-height:1.7">選んだメニューに合わせて入力欄が変わる。🏃走る人には距離、💪筋トレ派にはメニューのタグ（胸・脚・体幹…）、☕コーヒーの朝にはカフェ名。使わない欄は出てこないから、画面はいつもスッキリ。<br>ひとり朝活は <b>⚡ソロ即記録</b> でワンタップ保存。名簿に入れない一時ゲスト（旅先のランクラブ仲間など）は <b>👤ゲスト人数</b> でカウントできる。<br>Inputs adapt to your menu: distance for runners, muscle tags for lifters, café names for coffee mornings. Solo? One tap with <b>⚡Solo</b>. Running with guests? Just add a <b>👤guest count</b>.</div>
+
+    <div style="margin-top:16px;font-weight:900;letter-spacing:.08em">📱 アプリとして使う / USE AS AN APP</div>
+    <div class="hint" style="margin-top:6px;line-height:1.7">ホーム画面に追加すると、普通のアプリのように全画面で使えます。<br><br><b>iPhone（Safari）</b>：画面下の共有ボタン<span style="border:1px solid var(--line);border-radius:6px;padding:1px 6px">↑</span>をタップ →「<b>ホーム画面に追加</b>」→ 追加。<br><b>Android（Chrome）</b>：右上の<b>⋮</b>メニュー →「<b>アプリをインストール</b>」（または「ホーム画面に追加」）。<br><br>一度追加すれば、開くだけで<b>自動で最新版に更新</b>されます。<br>Add to Home Screen and it works like a native app — updates itself automatically every time you open it.</div>
 
     <div style="margin-top:16px;font-weight:900;letter-spacing:.08em">🔒 データ / YOUR DATA</div>
-    <div class="hint" style="margin-top:6px;line-height:1.7">記録はこの端末とクラウドに同期され、仲間の端末とも共有されます。写真・動画はDiscordへ直接送られ、アプリには保存されません。<br>Logs sync across the crew's devices via cloud. Photos & videos go straight to Discord — never stored in the app.</div>
+    <div class="hint" style="margin-top:6px;line-height:1.7">記録はこの端末とクラウドに同期され、仲間の端末とも共有されます。写真・動画はDiscordへ直接送られ、アプリには保存されません。<br>静かに積み上げたい日は <b>🔒ひっそり記録</b>：Discord投稿とランキングに出ません（自分の連続日数・回数には残ります）。さらに設定タブの<b>プライバシーモード</b>をONにすると、個人ランキングや名簿の詳細は⭐スペシャリストだけが見られます。どちらもいつでもON/OFFできます。<br>※みんなで使う共有アプリなので、同期データ自体は仲間の端末にも届きます。「表示しない」仕組みであることをご理解ください。<br>Logs sync across the crew's devices via cloud. Prefer a quiet morning? Use <b>🔒 quiet log</b> — it stays out of Discord posts and rankings, but still counts for your own streak. Privacy mode (Config tab) limits personal rankings to Specialists. Both are reversible anytime.</div>
 
     <div style="margin:16px 0 14px;text-align:center;font-family:'Anton',Impact,sans-serif;transform:skewX(-8deg);font-size:15px;letter-spacing:.04em">Run. Heat. Ice. Repeat<span class="dot">.</span></div>
     <button class="cta ghost" id="aboutClose"><span>✕ 閉じる / Close</span></button>
@@ -856,11 +941,11 @@
   function memberName(id){ const m=roster.find(x=>x.id===id); return m?m.name:"（不明）"; }
   function effWebhook(){ return (config.webhook||"").trim() || BUILTIN_WEBHOOK; }
 
-  const MENU=[{k:"walk",e:"🚶",l:"WALK"},{k:"run",e:"🏃",l:"RUN"},{k:"hiit",e:"🔥",l:"HIIT"},{k:"str",e:"💪",l:"STRENGTH"},{k:"rope",e:"🪢",l:"ROPE"},{k:"bridge",e:"🌉",l:"BRIDGE"},{k:"hand",e:"🤸",l:"HANDSTAND"},{k:"bokuto",e:"⚔️",l:"BOKUTO"},{k:"ice",e:"🧊",l:"ICEBATH"}]; // WALKはRUNの前、ICEBATHは締め
+  const MENU=[{k:"walk",e:"🚶",l:"WALK"},{k:"run",e:"🏃",l:"RUN"},{k:"hiit",e:"🔥",l:"HIIT"},{k:"str",e:"💪",l:"STRENGTH"},{k:"rope",e:"🪢",l:"ROPE"},{k:"bridge",e:"🌉",l:"BRIDGE"},{k:"hand",e:"🤸",l:"HANDSTAND"},{k:"bokuto",e:"⚔️",l:"BOKUTO"},{k:"coffee",e:"☕",l:"COFFEE"},{k:"ice",e:"🧊",l:"ICEBATH"}]; // WALKはRUNの前、ICEBATHは締め。COFFEEは活動の合間のお楽しみ
 
   // ---- record-tab state ----
   let attArr=[];        // 参加者（来た人全員）
-  let jankenArr=[];     // 男気じゃんけん参加者（attArrの部分集合・女性子供除外）
+  let jankenArr=[];     // GOCHIじゃんけん参加者（attArrの部分集合・女性子供除外）
   let winnerId=null;    // 勝者（奢る人）
   let phases=["run","hiit","ice"];
   let checkin=null;
@@ -898,6 +983,24 @@
       sessions.forEach(s=>{ if(s.spot) ss.add(s.spot); });
       sp.innerHTML=[...ss].map(s=>"<option value=\""+esc(s)+"\"></option>").join("");
     }
+    renderSiteChips();
+  }
+  // v3.8: 拠点チップ（よく使う順＋プリセット、タップで入力欄に反映）
+  function renderSiteChips(){
+    const sc=document.getElementById("siteChips"); if(!sc) return;
+    const inp=document.getElementById("sesSite");
+    const cur=(inp&&inp.value||"").trim();
+    const cnt={}; sessions.forEach(s=>{ if(s.site) cnt[s.site]=(cnt[s.site]||0)+1; });
+    const opts=[...new Set([...Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]),...SITE_PRESETS])].slice(0,8);
+    sc.innerHTML="";
+    opts.forEach(v=>{
+      const b=document.createElement("button"); b.type="button";
+      b.className="chip"+(v===cur?" on":"");
+      b.style.padding="7px 12px"; b.style.fontSize="12px";
+      b.textContent="📍"+v;
+      b.onclick=()=>{ if(inp){ inp.value=v; if(inp.onchange) inp.onchange(); } renderSiteChips(); };
+      sc.appendChild(b);
+    });
   }
   function calcStreak(){
     const set=new Set(sessions.map(s=>s.date));
@@ -917,11 +1020,76 @@
       el.onclick=()=>{ if(phases.includes(m.k)) phases=phases.filter(x=>x!==m.k); else phases.push(m.k); renderMenu(); };
       c.appendChild(el);
     });
+    updateCtxInputs();
   }
+  // v4.2: 「使う人に応じた入力」— 選んだメニューに合わせて入力欄が出る
+  //   ☕コーヒー選択 → カフェ名欄 ／ 💪筋トレ選択 → メニューのタグ ／ 🏃🚶 → 距離欄
+  //   使わない欄は出ないので、ランナーにも筋トレ派にもHIIT派にもスッキリ見える
+  let strTags=[];
+  const STR_TAGS=["胸","背中","脚","体幹","腕","肩","懸垂","腕立て","スクワット","バーピー"];
+  function updateCtxInputs(){
+    updateCafeBox();
+    const sb=document.getElementById("strBox");
+    if(sb){ const on=phases.includes("str"); sb.style.display=on?"block":"none"; if(on) renderStrChips(); }
+    const db=document.getElementById("distBox");
+    if(db){
+      const dv=((document.getElementById("sesDist")||{}).value||"");
+      db.style.display=(phases.includes("run")||phases.includes("walk")||dv!=="")? "" : "none";
+    }
+  }
+  function renderStrChips(){
+    const c=document.getElementById("strChips"); if(!c) return;
+    c.innerHTML="";
+    STR_TAGS.forEach(v=>{
+      const b=document.createElement("button"); b.type="button";
+      b.className="chip"+(strTags.includes(v)?" on":"");
+      b.style.padding="7px 12px"; b.style.fontSize="12px";
+      b.textContent=v;
+      b.onclick=()=>{ if(strTags.includes(v)) strTags=strTags.filter(x=>x!==v); else strTags.push(v); renderStrChips(); };
+      c.appendChild(b);
+    });
+  }
+  // v4.0: ☕ COFFEE選択時だけカフェ名欄を表示。過去のカフェは頻度順チップで再選択できる
+  function updateCafeBox(){
+    const box=document.getElementById("cafeBox"); if(!box) return;
+    const on=phases.includes("coffee");
+    box.style.display=on?"block":"none";
+    if(on) renderCafeChips();
+  }
+  function renderCafeChips(){
+    const c=document.getElementById("cafeChips"); if(!c) return;
+    const inp=document.getElementById("sesCafe");
+    const cur=(inp&&inp.value||"").trim();
+    const cnt={}; sessions.forEach(s=>{ if(s.cafe) cnt[s.cafe]=(cnt[s.cafe]||0)+1; });
+    const opts=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0,8);
+    c.innerHTML="";
+    opts.forEach(v=>{
+      const b=document.createElement("button"); b.type="button";
+      b.className="chip"+(v===cur?" on":"");
+      b.style.padding="7px 12px"; b.style.fontSize="12px";
+      b.textContent="☕"+v;
+      b.onclick=()=>{ if(inp){ inp.value=(inp.value.trim()===v)?"":v; } renderCafeChips(); };
+      c.appendChild(b);
+    });
+  }
+  // v4.1: メンバーが増えても選びやすく——🔍検索＋90日以上来てない人は「その他」に折りたたみ
+  let showDormant=false;
+  function lastAttDate(id){ let d=""; sessions.forEach(s=>{ if(s.attendees.includes(id) && s.date>d) d=s.date; }); return d; }
   function renderAtt(){
     const c=document.getElementById("attChips"); c.innerHTML="";
-    const ranked=[...roster].sort((a,b)=>attendCount(b.id)-attendCount(a.id));
-    ranked.forEach(m=>{
+    const q=((document.getElementById("attSearch")||{}).value||"").trim().toLowerCase();
+    let ranked=[...roster].sort((a,b)=>attendCount(b.id)-attendCount(a.id));
+    let dormant=[];
+    if(q){
+      ranked=ranked.filter(m=>m.name.toLowerCase().includes(q)); // 検索中は全員から探す
+    } else {
+      const cut=new Date(); cut.setDate(cut.getDate()-90); const cutStr=ymd(cut);
+      // 一度も参加してない人（＝入りたての人）は隠さない。選択中の人も隠さない
+      dormant=ranked.filter(m=>{ const ld=lastAttDate(m.id); return ld && ld<cutStr && !attArr.includes(m.id); });
+      if(dormant.length>=4){ const dset=new Set(dormant.map(m=>m.id)); ranked=ranked.filter(m=>!dset.has(m.id)); }
+      else dormant=[];
+    }
+    const mkChip=m=>{
       const el=document.createElement("div");
       el.className="chip"+(attArr.includes(m.id)?" on":"");
       el.innerHTML=esc(m.name)+(m.janken===false?" <span class='cnt'>♀/子</span>":"");
@@ -939,14 +1107,26 @@
       el.addEventListener("mousedown",lpStart); el.addEventListener("mouseup",lpCancel); el.addEventListener("mouseleave",lpCancel);
       el.addEventListener("contextmenu",e=>e.preventDefault());
       c.appendChild(el);
-    });
+    };
+    ranked.forEach(mkChip);
+    if(dormant.length){
+      const tg=document.createElement("div");
+      tg.className="chip"; tg.style.opacity=".7";
+      tg.innerHTML=(showDormant?"▲ たたむ / Hide":"😴 その他 "+dormant.length+"名 ▼");
+      tg.onclick=()=>{ showDormant=!showDormant; renderAtt(); };
+      c.appendChild(tg);
+      if(showDormant) dormant.forEach(mkChip);
+    }
     const add=document.createElement("div");
     add.className="chip add"; add.innerHTML="+ 新しい人 / New";
-    add.onclick=()=>{ const b=document.getElementById("addMemberBox"); b.style.display=b.style.display==="none"?"block":"none"; if(b.style.display==="block") document.getElementById("newMemberName").focus(); };
+    add.onclick=()=>{
+      if(!canManageRoster()){ toast("メンバー追加は⭐朝活スペシャリスト（参加"+SPEC_N+"回〜）の役目。近くのスペシャリストに頼んでね（Myタブで自分を選択済み？）",'r'); return; }
+      const b=document.getElementById("addMemberBox"); b.style.display=b.style.display==="none"?"block":"none"; if(b.style.display==="block") document.getElementById("newMemberName").focus(); };
     c.appendChild(add);
     document.getElementById("attCount").textContent = attArr.length? attArr.length+"名" : "";
     renderRecorderChips();
   }
+  (function(){ const i=document.getElementById("attSearch"); if(i) i.oninput=()=>renderAtt(); })();
   // ✍️ Recorded by：参加メンバーからタップで選べる
   function renderRecorderChips(){
     const c=document.getElementById("recorderChips"); if(!c) return;
@@ -965,7 +1145,7 @@
   function renderJankenPart(){
     const c=document.getElementById("jankenPartChips"); c.innerHTML="";
     const elig=attArr.filter(eligible);
-    if(elig.length===0){ c.innerHTML="<div class='hint'>じゃんけん対象の参加者がいません（女性・子供は自動で除外）。<br>No Gochi Janken players yet — women & kids sit this one out (auto-excluded).</div>"; return; }
+    if(elig.length===0){ c.innerHTML="<div class='hint'>じゃんけん対象の参加者がいません（女性・子供は自動で除外）。<br>No GOCHI Janken players yet — women & kids sit this one out (auto-excluded).</div>"; return; }
     elig.forEach(id=>{
       const el=document.createElement("div");
       el.className="chip"+(jankenArr.includes(id)?" on":"");
@@ -1063,6 +1243,61 @@
     jankenArr=(last.jankenIds||attArr.filter(eligible)).filter(id=>attArr.includes(id));
     winnerId=null; renderAtt(); renderJankenPart(); renderWinner(); toast("前回のメンバーをセット↻ / Same as last",'t');
   };
+  // v4.2: ⚡ ソロ即記録 — トシちゃん・ノリさんの奥さんのような「ひとり朝活」をワンタップで
+  //   Myタブの自分＋前回のソロメニューをセットして、その場で保存まで完了する
+  // v4.3: Myタブを知らなくてもOK——初回だけ「あなたはだれ？」を聞いて、その場で完結する
+  function doSoloSave(me){
+    if(editingDate) resetForm();
+    attArr=[me.id]; jankenArr=[]; winnerId=null;
+    const lastSolo=[...sessions].filter(s=>s.attendees.length===1&&s.attendees[0]===me.id)
+      .sort((a,b)=>b.date.localeCompare(a.date))[0];
+    if(lastSolo&&lastSolo.phases&&lastSolo.phases.length) phases=lastSolo.phases.slice();
+    document.getElementById("sesRecorder").value=me.name;
+    renderMenu(); renderAtt(); renderJankenPart(); renderWinner();
+    document.getElementById("saveBtn").onclick();
+  }
+  function renderSoloWho(){
+    const box=document.getElementById("soloWhoBox"), c=document.getElementById("soloWhoChips");
+    if(!box||!c) return;
+    box.style.display="block"; c.innerHTML="";
+    [...roster].sort((a,b)=>attendCount(b.id)-attendCount(a.id)).forEach(m=>{
+      const b=document.createElement("button"); b.type="button";
+      b.className="chip"; b.textContent=m.name;
+      b.onclick=()=>{
+        localStorage.setItem(MEKEY,m.id);
+        box.style.display="none";
+        toast("👋 "+m.name+" として記録します（次からは⚡1タップ）",'t');
+        doSoloSave(m);
+      };
+      c.appendChild(b);
+    });
+  }
+  document.getElementById("soloQuick").onclick=()=>{
+    const me=roster.find(m=>m.id===meId());
+    if(!me){
+      if(!roster.length){ toast("まずメンバーを登録してください / Add a member first",'r'); return; }
+      renderSoloWho();
+      toast("自分の名前をタップするだけで記録できます⚡",'t');
+      return;
+    }
+    document.getElementById("soloWhoBox").style.display="none";
+    doSoloSave(me);
+  };
+  // v4.3: 👤 ゲスト欄は使うときだけ開く（不要を省く）
+  document.getElementById("guestToggle").onclick=function(){
+    const box=document.getElementById("guestBox");
+    const open=box.style.display!=="block";
+    box.style.display=open?"block":"none";
+    this.textContent=open?"−👤 ゲストをたたむ / Hide guests":"＋👤 名簿に入れないゲストがいる / Add guests";
+  };
+  // v4.3: 👋 初回だけのやさしい案内（✕で二度と出ない・この端末だけ）
+  const HELLOKEY="thcc_hello_v1";
+  function updateHelloHint(){
+    const el=document.getElementById("helloHint"); if(!el) return;
+    el.style.display=(!localStorage.getItem(HELLOKEY) && !meId())? "block":"none";
+  }
+  document.getElementById("helloHintX").onclick=()=>{ localStorage.setItem(HELLOKEY,"1"); updateHelloHint(); };
+  (function(){ const i=document.getElementById("sesDist"); if(i) i.oninput=()=>updateCtxInputs(); })();
   document.getElementById("clearAtt").onclick=()=>{ attArr=[]; jankenArr=[]; winnerId=null; renderAtt(); renderJankenPart(); renderWinner(); };
   document.getElementById("noJanken").onclick=()=>{ winnerId=null; document.getElementById("treatAmount").value=""; renderWinner(); toast("奢りなしに設定 / No treat today"); };
 
@@ -1139,6 +1374,13 @@
       amount: hasWinner? amount : 0,
       phases: phases.slice(),
       note: document.getElementById("sesNote").value.trim(),
+      dist: (function(){ const v=parseFloat(document.getElementById("sesDist").value); return (isFinite(v)&&v>0)? Math.round(v*10)/10 : null; })(),
+      cafe: (function(){ const v=(document.getElementById("sesCafe").value||"").trim(); return v||null; })(),
+      // v4.2: ゲスト（名簿に入れない同行者）・筋トレメニュー・🔒ひっそり記録
+      guestN: (function(){ const v=parseInt(((document.getElementById("sesGuestN")||{}).value||""),10); return (isFinite(v)&&v>0)? v : null; })(),
+      guestNote: (function(){ const v=((document.getElementById("sesGuestNote")||{}).value||"").trim(); return v||null; })(),
+      strTags: (phases.includes("str")&&strTags.length)? strTags.slice() : null,
+      hush: ((document.getElementById("sesHush")||{}).checked)? true : null,
       checkin: checkin,
       savedAt: new Date().toISOString()
     };
@@ -1158,7 +1400,7 @@
   };
 
   document.getElementById("sendTodayBtn").onclick=function(){
-    const rec=findRec(todayStr(),curSite()) || sessions.find(s=>s.date===todayStr());
+    const rec=currentPostRec(); // v3.7: チップで選択中の記録
     if(!rec){ toast("今日の記録がありません",'r'); return; }
     if(!effWebhook()){ toast("Webhook未設定。設定タブを確認 / Set webhook in Config",'r'); switchTab('config'); return; }
     const btn=this; btn.disabled=true;
@@ -1213,6 +1455,7 @@
   };
   document.getElementById("sesSite").onchange=function(){
     const v=this.value.trim(); if(v) localStorage.setItem(SITEKEY,v);
+    renderSiteChips();
     if(!editingDate){ renderRecordState(); updateDateBanner(); }
   };
   document.getElementById("sesRecorder").onchange=function(){
@@ -1230,6 +1473,16 @@
     document.getElementById("sesRecorder").value=localStorage.getItem(RECRKEY)||config.host||"";
     document.getElementById("treatAmount").value="";
     document.getElementById("sesNote").value="";
+    document.getElementById("sesDist").value="";
+    document.getElementById("sesCafe").value="";
+    strTags=[];
+    const gn=document.getElementById("sesGuestN"); if(gn) gn.value="";
+    const gm=document.getElementById("sesGuestNote"); if(gm) gm.value="";
+    const gb=document.getElementById("guestBox"); if(gb) gb.style.display="none";
+    const gt=document.getElementById("guestToggle"); if(gt) gt.textContent="＋👤 名簿に入れないゲストがいる / Add guests";
+    const swb=document.getElementById("soloWhoBox"); if(swb) swb.style.display="none";
+    const hs=document.getElementById("sesHush"); if(hs) hs.checked=false;
+    const asr=document.getElementById("attSearch"); if(asr) asr.value=""; showDormant=false;
     document.getElementById("geoMini").textContent="";
     document.getElementById("geoBtn").textContent="📍 現在地 / Check-in（任意）";
     document.getElementById("gmapBox").style.display="none";
@@ -1249,11 +1502,45 @@
     if(showPost){
       document.getElementById("todayDoneInfo").innerHTML="✅ 今日は "+todayRecs.length+"件 記録済み。修正・削除は下の「最近の記録」の ✏️・✕ から / Edit via ✏️ below";
       renderPostOpts();
+      renderPostRecChips();
     }
     renderMenu(); renderAtt(); renderJankenPart(); renderWinner();
+    updateHelloHint();
+  }
+  // v3.7: 投稿対象の記録を選ぶチップ（複数記録がある日だけ表示）
+  let postRecKey=null;
+  function currentPostRec(){
+    // v4.2: 🔒ひっそり記録は投稿対象から外す（自分のカウントには残る）
+    const recs=sessions.filter(s=>s.date===todayStr() && !s.hush);
+    if(!recs.length) return null;
+    const hit=recs.find(s=>skey(s)===postRecKey);
+    if(hit) return hit;
+    const fr=findRec(todayStr(),curSite());
+    return (fr&&!fr.hush)? fr : recs[0];
+  }
+  function postChipLabel(r){
+    const names=(r.attendees||[]).map(memberName);
+    const who= names.length===1? names[0] : names.length+"名";
+    return "📍"+(r.site||DEFAULT_SITE)+(r.spot?"・"+r.spot:"")+"｜"+who;
+  }
+  function renderPostRecChips(){
+    const box=document.getElementById("postRecBox"), el=document.getElementById("postRecChips");
+    if(!box||!el) return;
+    const recs=sessions.filter(s=>s.date===todayStr() && !s.hush);
+    const cur=currentPostRec(); postRecKey= cur? skey(cur) : null;
+    if(recs.length<2){ box.style.display="none"; return; }
+    box.style.display="block";
+    el.innerHTML="";
+    recs.forEach(r=>{
+      const b=document.createElement("button"); b.type="button";
+      b.className="chip"+(skey(r)===postRecKey?" on":"");
+      b.textContent=postChipLabel(r);
+      b.onclick=()=>{ postRecKey=skey(r); renderPostRecChips(); };
+      el.appendChild(b);
+    });
   }
   // 投稿に含める項目の選択（タップでON/OFF、端末に保存）
-  const POST_OPTS=[["postGochi","🥊 男気 Gochi"],["postMonthly","🏦 当月成績 Monthly"],["postRate","🎲 勝率 Win rate"]];
+  const POST_OPTS=[["postGochi","🥊 GOCHI"],["postMonthly","🏦 当月成績 Monthly"],["postRate","🎲 勝率 Win rate"]];
   function renderPostOpts(){
     const el=document.getElementById("postOptChips"); if(!el) return;
     el.innerHTML="";
@@ -1283,6 +1570,13 @@
     document.getElementById("sesTime").value=s.time||"05:30";
     document.getElementById("treatAmount").value=s.amount||"";
     document.getElementById("sesNote").value=s.note||"";
+    document.getElementById("sesDist").value=s.dist||"";
+    document.getElementById("sesCafe").value=s.cafe||"";
+    strTags=(s.strTags||[]).slice();
+    const gn2=document.getElementById("sesGuestN"); if(gn2) gn2.value=s.guestN||"";
+    const gm2=document.getElementById("sesGuestNote"); if(gm2) gm2.value=s.guestNote||"";
+    const gb2=document.getElementById("guestBox"); if(gb2) gb2.style.display=(s.guestN||s.guestNote)?"block":"none";
+    const hs2=document.getElementById("sesHush"); if(hs2) hs2.checked=!!s.hush;
     document.getElementById("geoMini").innerHTML = checkin? ("✅ 位置あり："+esc(ciLabel(checkin))):"";
     const b=document.getElementById("editBanner"); b.style.display="block";
     const d=parseD(date); b.textContent="✏️ "+(d.getMonth()+1)+"/"+d.getDate()+" ("+WD[d.getDay()]+")｜📍"+editingSite+(editingSlot?"（別記録）":"")+" を編集中 / Editing";
@@ -1296,6 +1590,17 @@
 
   /* ---------- stats ---------- */
   function attendCount(id,ym){ return sessions.filter(s=>(!ym||s.date.startsWith(ym)) && s.attendees.includes(id)).length; }
+  // v4.0: ⭐ 朝活スペシャリスト制度 — 参加30回で自動認定。またはパワー継承（spec=true）で認定
+  //       スペシャリストはメンバー追加・布教などの運営権限を持つ
+  const SPEC_N=30;
+  function isSpec(m){ return !!m && (m.spec===true || attendCount(m.id)>=SPEC_N); }
+  function meIsSpec(){ return isSpec(roster.find(x=>x.id===meId())); }
+  // 誰もスペシャリストがいない立ち上げ期はロックしない（締め出し防止）
+  function canManageRoster(){ return roster.length===0 || !roster.some(isSpec) || meIsSpec(); }
+  // v4.2: 他人の詳細データ（ランキング・名簿の回数/金額）を見られるか。
+  //   プライバシーモードOFF（初期値）＝いままで通り全員に見える。
+  //   ONにすると⭐スペシャリストだけが見える。設定タブでいつでも切替＝あとから調整可能。
+  function canViewAll(){ return config.privacyMode!==true || meIsSpec(); }
   function treatTotal(id,ym){ return sessions.filter(s=>(!ym||s.date.startsWith(ym)) && s.winnerId===id).reduce((a,s)=>a+(s.amount||0),0); }
 
   function renderStats(){
@@ -1323,7 +1628,83 @@
         tl.appendChild(el);
       });
     }
+    renderRankings();
     renderHistory();
+  }
+  // v3.9: ランキング（月間参加・連続日数・GOCHI殿堂）
+  function memberStreak(id){
+    const days=new Set(sessions.filter(s=>s.attendees.includes(id)).map(s=>s.date));
+    let n=0, cur=new Date();
+    if(!days.has(ymd(cur))) cur.setDate(cur.getDate()-1);
+    while(days.has(ymd(cur))){ n++; cur.setDate(cur.getDate()-1); }
+    return n;
+  }
+  function fillRankList(el, items, unit, color){
+    el.innerHTML="";
+    if(!items.length){ el.innerHTML="<div class='empty'>まだ記録がありません<span class='dot'>。</span></div>"; return; }
+    const max=items[0].v;
+    items.slice(0,10).forEach((t,i)=>{
+      const row=document.createElement("div"); row.className="lb-item";
+      row.innerHTML="<div class='lb-rank g"+(i<3?i+1:"")+"'>"+(i+1)+"</div>"+
+        "<div class='lb-body'><div class='lb-name'>"+esc(t.name)+"</div>"+
+        "<div class='lb-bar'><span style='width:"+Math.round(t.v/max*100)+"%;background:"+color+"'></span></div></div>"+
+        "<div class='lb-val'>"+(t.label!=null?t.label:(t.v+unit))+"</div>";
+      el.appendChild(row);
+    });
+  }
+  function renderRankings(){
+    const rm=document.getElementById("rankMonthList");
+    const rs=document.getElementById("rankStreakList");
+    const rt=document.getElementById("rankTreatAllList");
+    if(!rm||!rs||!rt) return;
+    if(!canViewAll()){
+      const msg="<div class='empty'>🔒 プライバシーモード中：個人ランキングは⭐スペシャリストのみ閲覧できます<span class='dot'>。</span></div>";
+      rm.innerHTML=msg; rs.innerHTML=msg; rt.innerHTML=msg;
+      renderCafeMap();
+      return;
+    }
+    // v4.2: 🔒ひっそり記録はランキングに載せない（本人のMyタブ・連続日数には残る）
+    const pub=sessions.filter(s=>!s.hush);
+    const pubCount=(id,ym)=>pub.filter(s=>(!ym||s.date.startsWith(ym))&&s.attendees.includes(id)).length;
+    const pubStreak=id=>{
+      const days=new Set(pub.filter(s=>s.attendees.includes(id)).map(s=>s.date));
+      let n=0,cur=new Date();
+      if(!days.has(ymd(cur))) cur.setDate(cur.getDate()-1);
+      while(days.has(ymd(cur))){ n++; cur.setDate(cur.getDate()-1); }
+      return n;
+    };
+    fillRankList(rm,
+      roster.map(m=>({name:m.name,v:pubCount(m.id,statMonth)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v),
+      "日","var(--teal)");
+    fillRankList(rs,
+      roster.map(m=>({name:m.name,v:pubStreak(m.id)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v),
+      "日","var(--yellow)");
+    fillRankList(rt,
+      roster.map(m=>{
+        const wins=pub.filter(s=>s.winnerId===m.id);
+        const amt=wins.reduce((a,s)=>a+(+s.amount||0),0);
+        return {name:m.name,v:amt,label:wins.length+"回 "+yen(amt)};
+      }).filter(x=>x.v>0).sort((a,b)=>b.v-a.v),
+      "","var(--red)");
+    renderCafeMap();
+  }
+  // v4.2: ☕ 各地のカフェ — 世界のどこで飲んでも「うまいコーヒー」を共有できる小さなマップ
+  function renderCafeMap(){
+    const el=document.getElementById("cafeMapList"); if(!el) return;
+    const agg={};
+    sessions.filter(s=>s.cafe&&!s.hush).forEach(s=>{
+      const k=s.cafe;
+      (agg[k]=agg[k]||{n:0,sites:{}}).n++;
+      const st=s.site||DEFAULT_SITE; agg[k].sites[st]=(agg[k].sites[st]||0)+1;
+    });
+    const keys=Object.keys(agg).sort((a,b)=>agg[b].n-agg[a].n);
+    if(!keys.length){ el.innerHTML="<div class='empty'>☕を選んでカフェ名を記録すると、ここに各地のカフェが並びます<span class='dot'>。</span></div>"; return; }
+    el.innerHTML=keys.slice(0,12).map(k=>{
+      const a=agg[k];
+      const st=Object.keys(a.sites).sort((x,y)=>a.sites[y]-a.sites[x]).join("・");
+      return "<div class='lb-item'><div class='lb-body'><div class='lb-name'>☕ "+esc(k)+"</div>"+
+        "<div class='lb-sub'>📍"+esc(st)+"</div></div><div class='lb-val'>"+a.n+"回</div></div>";
+    }).join("");
   }
   function renderHistory(){
     fillHistList(document.getElementById("histList"), sessions.filter(s=>s.date.startsWith(statMonth)), "この月の記録はまだありません / No records this month");
@@ -1344,12 +1725,12 @@
       let treat="";
       if(s.winnerId) treat="<div class='hist-treat'>🏆 <span class='who'>"+esc(memberName(s.winnerId))+"</span> が "+yen(s.amount)+" 奢り</div>";
       const ph=(s.phases||["run","hiit","ice"]).map(k=>{const x=MENU.find(m=>m.k===k);return x?x.e:"";}).join("");
-      const meta="📍"+esc(s.site||DEFAULT_SITE)+(s.spot?"・"+esc(s.spot):"")+(s.slot?" ・🕐"+esc(s.time||"05:30"):"")+(s.recorder?" ・✍️"+esc(s.recorder):"");
+      const meta="📍"+esc(s.site||DEFAULT_SITE)+(s.spot?"・"+esc(s.spot):"")+(s.dist?" ・🏃"+s.dist+"km":"")+(s.cafe?" ・☕"+esc(s.cafe):"")+(s.strTags&&s.strTags.length?" ・💪"+s.strTags.map(esc).join("/"):"")+(s.guestN?" ・👤+"+s.guestN:"")+(s.hush?" ・🔒":"")+(s.slot?" ・🕐"+esc(s.time||"05:30"):"")+(s.recorder?" ・✍️"+esc(s.recorder):"");
       el.innerHTML=
         "<div class='hist-date'><div class='d'>"+d.getDate()+"</div><div class='m'>"+(d.getMonth()+1)+"月("+WD[d.getDay()]+")</div></div>"+
         "<div class='hist-body'><div class='hist-top'>"+s.attendees.length+"名参加 <span style='font-weight:400'>"+ph+"</span></div>"+
           "<div class='hist-att'>"+meta+"</div>"+
-          "<div class='hist-att'>"+esc(names)+"</div>"+treat+
+          "<div class='hist-att'>"+esc(names)+(s.guestNote?"　👤"+esc(s.guestNote):"")+"</div>"+treat+
           (s.note?"<div class='hist-att'>📝 "+esc(s.note)+"</div>":"")+"</div>"+
         "<div class='hist-acts'><button data-p='"+key+"'>📣</button><button data-s='"+key+"'>📸</button><button class='e' data-e='"+key+"'>✏️</button><button data-x='"+key+"'>✕</button></div>";
       c.appendChild(el);
@@ -1428,10 +1809,10 @@
     const bySite={}; st.ses.forEach(s=>{ const k=s.site||DEFAULT_SITE; bySite[k]=(bySite[k]||0)+1; });
     document.getElementById("pgSites").textContent=Object.keys(bySite).map(k=>"📍"+k+" "+bySite[k]+"回").join("　");
 
-    // 男気ランキング（年度累計）
+    // GOCHIランキング（年度累計）
     const tl=document.getElementById("pgTreatList"); tl.innerHTML="";
     const treats=st.per.filter(x=>x.treat>0).sort((a,b)=>b.treat-a.treat);
-    if(treats.length===0){ tl.innerHTML="<div class='empty'>まだ男気の記録がありません / No treats yet<span class='dot'>。</span></div>"; }
+    if(treats.length===0){ tl.innerHTML="<div class='empty'>まだGOCHIの記録がありません / No treats yet<span class='dot'>。</span></div>"; }
     else{
       const max=treats[0].treat;
       treats.forEach((t,i)=>{
@@ -1466,7 +1847,7 @@
     if(Object.keys(bySite).length>1) lines.push("🌏 "+Object.keys(bySite).map(k=>k+" "+bySite[k]+"回").join("・"));
     lines.push("");
     const treats=st.per.filter(x=>x.treat>0).sort((a,b)=>b.treat-a.treat);
-    lines.push("🥊 **男気途中経過** 総額 "+yen(st.treat));
+    lines.push("🥊 **GOCHI途中経過** 総額 "+yen(st.treat));
     if(treats.length===0) lines.push("　まだ記録なし");
     else treats.forEach((t,i)=> lines.push((i===0?"🏆":i===1?"🥈":i===2?"🥉":"　")+" "+(i+1)+". "+t.name+"　"+yen(t.treat)+"（"+t.wins+"回）"));
     lines.push("");
@@ -1493,15 +1874,17 @@
     document.getElementById("crewCount").textContent=roster.length? roster.length+"名":"";
     const c=document.getElementById("crewList"); c.innerHTML="";
     if(roster.length===0){ c.innerHTML="<div class='empty'>まだメンバーがいません。<br>上から追加するか、記録画面で「+新しい人」から登録<span class='dot'>。</span><br>No members yet — add above, or via「+ New」on the Log tab.</div>"; return; }
-    const list=roster.map(m=>({...m,att:attendCount(m.id),treat:treatTotal(m.id)}));
+    let list=roster.map(m=>({...m,att:attendCount(m.id),treat:treatTotal(m.id)}));
+    const cq=((document.getElementById("crewSearch")||{}).value||"").trim().toLowerCase();
+    if(cq) list=list.filter(m=>m.name.toLowerCase().includes(cq));
     list.sort((a,b)=> crewSort==="att"? b.att-a.att : b.treat-a.treat);
     const maxAtt=Math.max(1,...list.map(x=>x.att));
     list.forEach((m,i)=>{
       const el=document.createElement("div"); el.className="lb-item";
       el.innerHTML="<div class='lb-rank g"+(i<3?i+1:"")+"'>"+(i+1)+"</div>"+
-        "<div class='lb-body'><div class='lb-name'>"+esc(m.name)+(m.janken===false?" <span class='cnt'>♀/子</span>":"")+"</div>"+
-        "<div class='lb-sub'>参加 "+m.att+"回 ・ 奢り累計 "+yen(m.treat)+"</div>"+
-        "<div class='lb-bar'><span style='width:"+Math.round(m.att/maxAtt*100)+"%'></span></div></div>"+
+        "<div class='lb-body'><div class='lb-name'>"+esc(m.name)+(isSpec(m)?" ⭐":"")+(m.janken===false?" <span class='cnt'>♀/子</span>":"")+"</div>"+
+        (canViewAll()? "<div class='lb-sub'>参加 "+m.att+"回 ・ GOCHI累計 "+yen(m.treat)+"</div>"+
+        "<div class='lb-bar'><span style='width:"+Math.round(m.att/maxAtt*100)+"%'></span></div>" : "")+"</div>"+
         "<div class='hist-acts'><button data-rj='"+m.id+"' style='color:"+(m.janken!==false?'var(--teal)':'var(--muted2)')+"'>🥊</button><button class='e' data-rn='"+m.id+"'>✎</button><button data-rx='"+m.id+"'>✕</button></div>";
       c.appendChild(el);
     });
@@ -1520,6 +1903,7 @@
     });
   }
   document.getElementById("crewAddBtn").onclick=()=>{
+    if(!canManageRoster()){ toast("メンバー追加は⭐朝活スペシャリスト（参加"+SPEC_N+"回〜）の役目。近くのスペシャリストに頼んでね（Myタブで自分を選択済み？）",'r'); return; }
     const inp=document.getElementById("crewNewName"); const nameIn=(inp.value||"").trim();
     const existed=nameIn && roster.some(m=>m.name===nameIn);
     const id=addMember(inp.value);
@@ -1530,6 +1914,7 @@
     else if(existed){ toast("「"+nameIn+"」はすでに登録されています"); }
     else{ toast("メンバーを追加🤝",'t'); }
   };
+  (function(){ const i=document.getElementById("crewSearch"); if(i) i.oninput=()=>renderCrew(); })();
   document.getElementById("sortAtt").onclick=function(){ crewSort="att"; this.classList.add("on"); document.getElementById("sortTreat").classList.remove("on"); renderCrew(); };
   document.getElementById("sortTreat").onclick=function(){ crewSort="treat"; this.classList.add("on"); document.getElementById("sortAtt").classList.remove("on"); renderCrew(); };
 
@@ -1565,6 +1950,16 @@
     toast(m.janken===false?"じゃんけん対象外にしました":"じゃんけん対象に戻しました",'t');
     closeMemberEdit();
   };
+  // v4.0: ⭐ パワー継承 — スペシャリストが他メンバーへ運営パワーを分け与える（モレナ方式）
+  document.getElementById("mvSpec").onclick=()=>{
+    const m=roster.find(x=>x.id===editMemberId); if(!m){ closeMemberEdit(); return; }
+    if(!canManageRoster()){ toast("パワー継承は⭐スペシャリストのみ（Myタブで自分を選択してね）",'r'); closeMemberEdit(); return; }
+    if(attendCount(m.id)>=SPEC_N && m.spec!==true){ toast("「"+m.name+"」は参加"+SPEC_N+"回超えですでにスペシャリスト⭐"); closeMemberEdit(); return; }
+    m.spec=(m.spec!==true);
+    touchM(m); jsave(RKEY,roster); refreshAll();
+    toast(m.spec? "⭐ パワーを継承！「"+m.name+"」はスペシャリストになった":"継承を解除しました");
+    closeMemberEdit();
+  };
   document.getElementById("mvDelete").onclick=()=>{
     const m=roster.find(x=>x.id===editMemberId); if(!m){ closeMemberEdit(); return; }
     if(!confirm("「"+m.name+"」を削除しますか？（過去の記録は残ります）/ Remove this member? Past records are kept.")) return;
@@ -1577,7 +1972,7 @@
   };
 
   /* ---------- Discord ---------- */
-  // v3.6: Discordも短い報告文に統一（SNS短文＋名前＋男気＋メモ）
+  // v3.6: Discordも短い報告文に統一（SNS短文＋名前＋GOCHI＋メモ）
   function buildMessage(rec){ return buildShortMessage(rec, true); }
   function sendDiscord(content, files){
     const url=effWebhook();
@@ -1742,7 +2137,7 @@
       const bh2=180, top=y-52;
       x.fillStyle="rgba(238,62,35,.10)"; x.fillRect(44,top,W-88,bh2);
       x.fillStyle=RED; x.fillRect(44,top,10,bh2);
-      x.fillStyle=MUT; x.font="700 30px "+JPFONT; x.fillText("🥊 男気じゃんけん",cx,y);
+      x.fillStyle=MUT; x.font="700 30px "+JPFONT; x.fillText("🥊 GOCHIじゃんけん",cx,y);
       x.fillStyle=RED;
       const wtxt="🏆 "+memberName(rec.winnerId)+" が "+yen(rec.amount)+" 奢り！";
       let wfs=58; x.font="900 "+wfs+"px "+JPFONT;
@@ -1829,7 +2224,7 @@
     });
     y+=320;
     x.fillStyle=WHT; x.font="700 44px "+JPFONT;
-    x.fillText("🥊 男気 "+st.wins+"回 ・ 累計 "+yen(st.treat),cx,y);
+    x.fillText("🥊 GOCHI "+st.wins+"回 ・ 累計 "+yen(st.treat),cx,y);
     x.fillStyle=MUT; x.font="700 34px "+JPFONT;
     x.fillText("Run. Heat. Ice. Repeat. — Thcc.",cx,H-110);
     return cv;
@@ -1848,7 +2243,7 @@
     try{ await document.fonts.load('400 100px Anton'); }catch(e){}
     presentShare(drawMeCard(me,st), "me_"+todayStr());
   };
-  document.getElementById("shareTodayBtn").onclick=()=>openShare(todayStr());
+  document.getElementById("shareTodayBtn").onclick=()=>{ const rec=currentPostRec(); if(!rec){ toast("今日の記録がありません",'r'); return; } openShare(rec); };
   /* ---------- X / Threads へ投稿 (v3.6) ----------
      APIキー不要の公式「投稿画面を開く」リンクを使う。
      本文入りの投稿画面が開くので、あとはポストを押すだけ。
@@ -1860,18 +2255,19 @@
     const ph=(rec.phases||[]).map(k=>{const x=MENU.find(m=>m.k===k);return x?x.e:"";}).join("");
     let t="🌅 朝活地球 | Asakatsu Earth\n"
       +(d.getMonth()+1)+"/"+d.getDate()+"("+WD[d.getDay()]+") "+(rec.time||"05:30")+"｜📍"+site+(rec.spot?"・"+rec.spot:"")+"\n"
-      +ph+" 参加 "+names.length+"名";
+      +ph+" 参加 "+(names.length+(+rec.guestN||0))+"名"+(rec.guestN?"（ゲスト"+rec.guestN+"名）":"")+(rec.dist?"｜🏃"+rec.dist+"km":"")+(rec.cafe?"｜☕"+rec.cafe:"")+(rec.strTags&&rec.strTags.length?"｜💪"+rec.strTags.join("/"):"");
     const withNames=t+"\n"+names.join("・");
     if(discord || withNames.length<=110) t=withNames; // X用は大人数のとき名前を省略して字数制限に収める
     if(discord){
-      if(rec.winnerId && config.postGochi!==false) t+="\n🥊 男気 Treat：🏆 "+memberName(rec.winnerId)+" "+yen(rec.amount);
+      if(rec.winnerId && config.postGochi!==false) t+="\n🥊 GOCHI：🏆 "+memberName(rec.winnerId)+" "+yen(rec.amount);
+      if(rec.guestNote) t+="\n👤 "+rec.guestNote;
       if(rec.note) t+="\n📝 "+rec.note;
       return t;
     }
     return t+"\n#朝活 #朝活地球 #Thcc";
   }
   function openSNS(base){
-    const rec=findRec(todayStr(),curSite()) || sessions.find(s=>s.date===todayStr());
+    const rec=currentPostRec(); // v3.7: チップで選択中の記録
     if(!rec){ toast("今日の記録がありません",'r'); return; }
     try{ window.open(base+encodeURIComponent(buildShortMessage(rec)),"_blank"); }catch(e){ toast("開けませんでした",'r'); }
   }
@@ -1899,10 +2295,12 @@
   function applyConfig(){
     document.getElementById("cfgHost").value=config.host||"";
     document.getElementById("cfgWebhook").value=config.webhook||"";
+    const pv=document.getElementById("cfgPrivacy"); if(pv) pv.checked=config.privacyMode===true;
   }
   document.getElementById("saveConfig").onclick=()=>{
     config.host=document.getElementById("cfgHost").value.trim();
     config.webhook=document.getElementById("cfgWebhook").value.trim();
+    const pv=document.getElementById("cfgPrivacy"); if(pv) config.privacyMode=pv.checked? true : false;
     jsave(CKEY,config); refreshAll(); toast("設定を保存しました⚙︎",'t');
   };
   document.getElementById("testDiscord").onclick=()=>{
@@ -2004,7 +2402,23 @@
     while(days.has(ymd(curD))){ n++; curD.setDate(curD.getDate()-1); }
     document.getElementById("meStreak").textContent=n;
     const treats=mine.filter(s=>s.winnerId===cur);
-    document.getElementById("meTreat").textContent="🥊 男気："+treats.length+"回 ・ 累計 "+yen(treats.reduce((a,s)=>a+(s.amount||0),0));
+    // v3.9: 距離の積み上げ（記録に距離が入っているセッションの合計）
+    const kmAll=mine.reduce((a,s)=>a+(+s.dist||0),0);
+    const kmMonth=mine.filter(s=>s.date.startsWith(ym)).reduce((a,s)=>a+(+s.dist||0),0);
+    const km1=v=>Math.round(v*10)/10;
+    // v4.0: ☕ 行きつけカフェ（回数順）＋ ⭐ スペシャリスト進捗
+    const myCafes={}; mine.forEach(s=>{ if(s.cafe) myCafes[s.cafe]=(myCafes[s.cafe]||0)+1; });
+    const cafeKeys=Object.keys(myCafes).sort((a,b)=>myCafes[b]-myCafes[a]);
+    // v4.2: 🌏 行った拠点（世界のどこで朝活したか）＋ 💪 筋トレの積み上げ
+    const mySites={}; mine.forEach(s=>{ const k=s.site||DEFAULT_SITE; mySites[k]=(mySites[k]||0)+1; });
+    const siteKeys=Object.keys(mySites).sort((a,b)=>mySites[b]-mySites[a]);
+    const strCnt=mine.filter(s=>s.phases&&s.phases.includes("str")).length;
+    document.getElementById("meTreat").innerHTML="🥊 GOCHI："+treats.length+"回 ・ 累計 "+yen(treats.reduce((a,s)=>a+(s.amount||0),0))+
+      (kmAll>0? "<br>🏃 距離：今月 "+km1(kmMonth)+"km ・ 通算 "+km1(kmAll)+"km" : "")+
+      (strCnt>0? "<br>💪 筋トレ："+strCnt+"回" : "")+
+      (siteKeys.length>1? "<br>🌏 拠点："+siteKeys.length+"ヶ所 ・ "+siteKeys.slice(0,3).map(k=>esc(k)+"×"+mySites[k]).join("・") : "")+
+      (cafeKeys.length? "<br>☕ カフェ："+mine.filter(s=>s.cafe).length+"回 ・ "+cafeKeys.slice(0,3).map(c=>esc(c)+"×"+myCafes[c]).join("・") : "")+
+      "<br>"+(isSpec(me)? "⭐ 朝活スペシャリスト認定済み" : "⭐ スペシャリストまで あと"+Math.max(0,SPEC_N-mine.length)+"回");
     // 参加カレンダー（◀▶で月を移動できる）
     const base= meCalYM? parseD(meCalYM+"-01") : new Date();
     const y=base.getFullYear(), mo=base.getMonth();
@@ -2049,7 +2463,10 @@
       dks.map(k=>{
         const e=byDate[k]; const dd2=parseD(k);
         const where=e.ses.map(s=>esc(s.site||DEFAULT_SITE)+(s.spot?"・"+esc(s.spot):"")).join(" / ");
-        const ph2=e.ses.length? (e.ses[0].phases||[]).map(p=>{const x=MENU.find(m=>m.k===p);return x?x.e:"";}).join("") : "";
+        const ph2=(e.ses.length? (e.ses[0].phases||[]).map(p=>{const x=MENU.find(m=>m.k===p);return x?x.e:"";}).join("") : "")
+          +(function(){ const km=e.ses.reduce((a,s)=>a+(+s.dist||0),0); return km>0? " 🏃"+(Math.round(km*10)/10)+"km" : ""; })()
+          +(function(){ const cs=[...new Set(e.ses.map(s=>s.cafe).filter(Boolean))]; return cs.length? " ☕"+cs.map(esc).join("・") : ""; })()
+          +(function(){ const ts=[...new Set([].concat(...e.ses.map(s=>s.strTags||[])))]; return ts.length? " 💪"+ts.map(esc).join("/") : ""; })();
         return "<div class='mini' style='padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);line-height:1.55'>"+
           "<span style='color:var(--teal);font-weight:800'>"+(dd2.getMonth()+1)+"/"+dd2.getDate()+"("+WD[dd2.getDay()]+")</span>　"+
           (where? "📍"+where+"　"+ph2 : "<span style='opacity:.5'>参加記録なし</span>")+
@@ -2240,12 +2657,16 @@
      アプリが前面に戻ってくるたびに最新バージョンを確認。
      新しい版があれば：入力途中でなければそのまま自動リロード、
      入力途中なら壊さないように「タップで更新」バナーを出す。 */
-  const APP_VER="3.6";
+  const APP_VER="4.3";
   let lastVerCheck=Date.now(); // 起動直後は最新なのでスキップ
   function isTyping(){
     try{
       return !!editingDate || attArr.length>0 ||
         document.getElementById("sesNote").value!=="" ||
+        document.getElementById("sesDist").value!=="" ||
+        document.getElementById("sesCafe").value!=="" ||
+        document.getElementById("attSearch").value!=="" ||
+        document.getElementById("sesGuestNote").value!=="" ||
         document.getElementById("sesSpot").value!=="" ||
         document.getElementById("meMemoText").value!=="";
     }catch(e){ return true; } // 判定できないときは安全側（勝手にリロードしない）
