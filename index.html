@@ -153,6 +153,16 @@
   .quick-btn:active{background:var(--panel2)}
   .quick-btn.tealtxt{color:var(--teal)}
 
+  /* v4.5: 折りたたみ（投稿オプションなど） */
+  details.fold summary{
+    cursor:pointer;font-size:12px;font-weight:800;color:var(--muted);
+    padding:9px 12px;border:1px solid var(--line);border-radius:11px;background:var(--bg2);
+    list-style:none;user-select:none;-webkit-user-select:none;
+  }
+  details.fold summary::-webkit-details-marker{display:none}
+  details.fold[open] summary{color:var(--white);border-bottom-left-radius:0;border-bottom-right-radius:0}
+  details.fold[open]>*:not(summary){margin-left:2px;margin-right:2px}
+
   /* baht */
   .yen-wrap{position:relative}
   .yen-wrap::before{content:"฿";position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--red);font-weight:900;font-size:18px}
@@ -438,26 +448,27 @@
       <div class="hint" id="todayDoneInfo" style="margin-bottom:10px"></div>
       <!-- v3.7: 複数記録がある日はどれを投稿するか選ぶ（写真・Discord・画像・X・Threads全てに連動） -->
       <div id="postRecBox" style="display:none;margin-bottom:10px">
-        <div class="hint" style="margin-bottom:6px">投稿する記録を選択（写真・📣・📸・𝕏・🧵 すべてに反映）/ Select record to post:</div>
+        <div class="hint" style="margin-bottom:6px">投稿する記録を選択 / Select record to post:</div>
         <div class="chips" id="postRecChips"></div>
       </div>
+      <!-- v4.5: Discord中心に整理 — 📷+📣がメイン、📸/𝕏/🧵は小さく一列、細かい設定は折りたたみ -->
       <div id="attachBox" style="margin-bottom:10px">
         <input type="file" id="attachInput" accept="image/*,video/*" multiple style="display:none">
         <button class="cta ghost" id="attachBtn"><span>📷 写真・動画をつける / Add photos & videos</span></button>
         <div id="attachThumbs" style="display:none;gap:6px;flex-wrap:wrap;margin-top:8px"></div>
-        <div class="hint" style="margin-top:6px">下の📣投稿と一緒にDiscordへ送ります。最大10点・合計約10MB（写真は自動で軽量化🪶）<br>Sent together with your post below. Up to 10 files, ~10MB total. Photos auto-compressed.</div>
-      </div>
-      <div style="margin-bottom:10px">
-        <div class="hint" style="margin-bottom:6px">投稿に含める（タップで切替）/ Include in post:</div>
-        <div class="chips" id="postOptChips"></div>
       </div>
       <button class="cta" id="sendTodayBtn" style="margin-bottom:10px"><span>📣 Discordに送る / Post to Discord</span></button>
-      <button class="cta" id="shareTodayBtn" style="margin-bottom:10px"><span>📸 シェア画像を作る / Share image</span></button>
-      <div class="row2">
-        <button class="quick-btn" id="xPostBtn">𝕏 Xでポスト</button>
-        <button class="quick-btn" id="threadsPostBtn">🧵 Threadsでポスト</button>
+      <div class="row2" style="margin-bottom:8px">
+        <button class="quick-btn" id="shareTodayBtn">📸 シェア画像</button>
+        <button class="quick-btn" id="xPostBtn">𝕏 ポスト</button>
+        <button class="quick-btn" id="threadsPostBtn">🧵 Threads</button>
       </div>
-      <div class="hint" style="margin-top:6px">投稿画面が本文入りで開きます。画像は📸で作って添付を / Opens compose with text prefilled</div>
+      <details class="fold">
+        <summary>⚙︎ 投稿に含める項目・ヒント / Post options</summary>
+        <div class="hint" style="margin:10px 0 6px">投稿に含める（タップで切替）/ Include in post:</div>
+        <div class="chips" id="postOptChips"></div>
+        <div class="hint" style="margin-top:10px">📷 写真・動画は📣と一緒にDiscordへ（最大10点・合計約10MB、写真は自動で軽量化🪶）。<br>𝕏・🧵は本文入りの投稿画面が開きます。画像は📸で作って添付を / Photos go with 📣. 𝕏/🧵 open compose prefilled.</div>
+      </details>
     </div>
 
     <!-- 最近の記録（修正・投稿の入口）-->
@@ -646,7 +657,7 @@
     </div>
   </section>
 
-  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.4 Final 🌏</span></footer>
+  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.5 Final 🌏</span></footer>
 </div>
 
 <div id="updBar" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:99;background:var(--teal);color:#06232a;font-weight:800;padding:12px 14px;border-radius:12px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.5);cursor:pointer"></div>
@@ -2728,7 +2739,7 @@
      アプリが前面に戻ってくるたびに最新バージョンを確認。
      新しい版があれば：入力途中でなければそのまま自動リロード、
      入力途中なら壊さないように「タップで更新」バナーを出す。 */
-  const APP_VER="4.4";
+  const APP_VER="4.5";
   let lastVerCheck=Date.now(); // 起動直後は最新なのでスキップ
   function isTyping(){
     try{
