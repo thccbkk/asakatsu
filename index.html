@@ -578,7 +578,7 @@
         <input type="text" id="meMemoText" placeholder="一言メモ（任意）/ One-line memo" style="margin-top:10px">
         <div id="habInputs" style="margin-top:10px"></div>
         <button class="cta teal" id="habSaveBtn" style="margin-top:10px"><span>🔥 きょうの積み上げを保存 / Save stack</span></button>
-        <button class="cta ghost" id="habPostBtn" style="margin-top:8px"><span>📣 Discordに送る / Post stack</span></button>
+        <button class="cta ghost" id="habPostBtn" style="margin-top:8px"><span>📣 保存してDiscordへ / Save &amp; post</span></button>
         <div class="mini" style="margin-top:10px">習慣を追加：名前と単位を選んで＋。Σ/★で「累計⇄ベスト」切替、✎で累計を手修正（インスタの数字に合わせられます）。</div>
         <div class="row2" style="margin-top:6px">
           <input type="text" id="habNewName" placeholder="習慣名（例：HIIT・懸垂・逆立ち・コーヒー）" style="flex:2">
@@ -679,7 +679,7 @@
     </div>
   </section>
 
-  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.8 Final 🌏</span></footer>
+  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.9 Final 🌏</span></footer>
 </div>
 
 <div id="updBar" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:99;background:var(--teal);color:#06232a;font-weight:800;padding:12px 14px;border-radius:12px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.5);cursor:pointer"></div>
@@ -1970,8 +1970,7 @@
       toast(m.name+"：じゃんけん"+(m.janken!==false?"参加":"除外"));
     });
     c.querySelectorAll("[data-rn]").forEach(b=>b.onclick=()=>{
-      const id=b.getAttribute("data-rn"); const m=roster.find(x=>x.id===id);
-      const nn=prompt("名前を変更 / Rename", m.name); if(nn&&nn.trim()){ m.name=nn.trim(); touchM(m); jsave(RKEY,roster); refreshAll(); }
+      openMemberEdit(b.getAttribute("data-rn")); // v4.9: 編集はモーダルに統一（名前・🥊・⭐・削除をひとつの画面で）
     });
     c.querySelectorAll("[data-rx]").forEach(b=>b.onclick=()=>{
       const id=b.getAttribute("data-rx"); const m=roster.find(x=>x.id===id);
@@ -2675,8 +2674,8 @@
       if(b.blur) b.blur(); jsave(HKEY,habits); renderMe();
     });
   }
-  document.getElementById("habSaveBtn").onclick=function(){
-    const cur=meId(); if(!cur || !roster.find(m=>m.id===cur)){ toast("先に自分の名前を選んでください",'r'); return; }
+  // v4.9: 保存処理を共通化（🔥保存と📣投稿の両方から使う）
+  function habSaveNow(cur){
     const t=todayStr(); let any=false;
     document.querySelectorAll("#habInputs [data-hab]").forEach(inp=>{
       const id=inp.getAttribute("data-hab"); const v=inp.value.trim(); const lid=id+"@"+t;
@@ -2693,6 +2692,11 @@
     }
     if(document.activeElement&&document.activeElement.blur) document.activeElement.blur();
     jsave(HKEY,habits); renderMe();
+    return any;
+  }
+  document.getElementById("habSaveBtn").onclick=function(){
+    const cur=meId(); if(!cur || !roster.find(m=>m.id===cur)){ toast("先に自分の名前を選んでください",'r'); return; }
+    const any=habSaveNow(cur);
     toast(any? "きょうの積み上げを保存しました🔥":"きょうの記録をクリアしました",'t');
   };
   // v4.7: 📣 Stackカードの内容をそのままDiscordへ
@@ -2718,10 +2722,11 @@
     const cur=meId(); const me=roster.find(m=>m.id===cur);
     if(!me){ toast("先に自分の名前を選んでください",'r'); return; }
     if(!effWebhook()){ toast("Webhook未設定：Configタブで設定してください",'r'); return; }
+    habSaveNow(cur); // v4.9: 押し忘れ防止 — 投稿前に今日の入力（習慣・きぶん・一言）を自動保存
     const mine=sessions.filter(s=>s.attendees.includes(cur));
     const btn=this; btn.disabled=true;
     sendDiscord(habMessage(cur, me, mine))
-      .then(()=>toast("Discordに投稿しました📣 Posted!",'t'))
+      .then(()=>toast("保存＆Discordに投稿しました📣🔥",'t'))
       .catch(()=>toast("投稿失敗⚠️ 通信・設定を確認",'r'))
       .finally(()=>{ btn.disabled=false; });
   };
@@ -2904,7 +2909,7 @@
      アプリが前面に戻ってくるたびに最新バージョンを確認。
      新しい版があれば：入力途中でなければそのまま自動リロード、
      入力途中なら壊さないように「タップで更新」バナーを出す。 */
-  const APP_VER="4.8";
+  const APP_VER="4.9";
   let lastVerCheck=Date.now(); // 起動直後は最新なのでスキップ
   function isTyping(){
     try{
