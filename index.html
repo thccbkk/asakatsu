@@ -226,6 +226,10 @@
   .hist-top .sub{font-weight:400;font-size:10px;color:var(--muted2)}
   .hist-att{font-size:11.5px;color:var(--muted);margin-top:1px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hist-note{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical} /* 一言は最大2行まで見せる (v4.5.2) */
+  .hab-line{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.09);font-size:14.5px} /* 積み上げカード (v4.6) */
+  .hab-line .hn{font-weight:800;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hab-line .ht{color:var(--muted2);font-size:13px;white-space:nowrap}
+  .hab-line .hv{color:var(--teal);font-weight:800;white-space:nowrap}
   .hist-treat{font-size:11.5px;margin-top:2px}
   .hist-treat .who{color:var(--red);font-weight:800}
   .hist-acts{display:grid;grid-template-columns:auto auto;gap:3px 10px;align-self:center;flex-shrink:0}
@@ -308,7 +312,7 @@
         <div><span class="n" id="streakN">0</span></div>
         <div class="l">DAY STREAK</div>
         <div class="l2">世界のどこかで朝活継続中<br>Somewhere on Earth, every morning 🌏</div>
-        <img class="hdr-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAD5CAMAAACqJ/hvAAAA/1BMVEX7mpL239/7Zlz6MCf6LiP6hnr5HBH7VFD9OS39TTz7TkV/AAD7yLf/AP/8k4Z///+qVVX6Rjp/f3+5///ytcUA//+qVQD7H0z/fYX7i3y/Pz/8UD4AAAD8FAH/AAD+/v77IxP8DQD7JBf+fXz7Nyz6Gg76Jxr7V036V036Ny7/fwD6d2/6NCn7RTn+VVT7Rjr/VQD7Jxv6KyP7aWX//wD6S0T8ZVj6KyP6uLP819L7Y1mzAAD5mJH7Qzj6qKf7SkMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC7m2FFAAAAQHRSTlMjD1JfzieuJxoniwIUAUMCA6YCAxUBAxQfRARWAP4BBPD+0ASP0LEtTHICLq5wA1MDj64wAU4ukhcTRgMYjRdsu9sSsQAAGf9JREFUeNrtXYd24zqSBZVst/vlNzM7u2CBQaRIZVlWsmT7//9qmRMAEiCpYPnhnO52W5ZMXhYq3ApA+CssAP/vj46zWDj96DtjuPhloC8AlenBsl+sDEtT/WWsXOcjAGz5D1iUWGG83qn5pdndLQlf+wesdBHAaKiyljF8uzBa1wXrtfJePW210VTesid4/F3Aglh18+UK/2uolixrhJ+/i2SdzPKNBJiUYuWhdYLX7wAWkHdvI6EStADIUE91lMHaj7sLqi10xT3YDyDo8O8W8Gdq/zoKmUwZaDmXQ+uaYD2EKLzx7vZ33FFjwVodgm85Bm0UFYDvsA3tSGbwnLMJfWh0H68X77+vMAd8oIVriL8DWHgT7TDERAvwTA3A8tCawGOs8V0KLQ7Y92UNgbyEdztgaXmC91qIla6/kHiref9QaBkEzLsHa+nppHClYGQFa6HGYA0JZDx6+1ob8ap+1hHHMZ9L3S6A0kt2YdZiLuHtWhbxqmCNAcW3uy7e7itGKRhPmVcjvZ+PqxE27x0sD4LYQbeLYEW7MFyP2VeB1lq+2iL3DpYJKPbKFwW0AHc52yx20C6vtq5M0UCitTQlf7up0HnrPfda7KDl1ucF0Lo2WDCK73ZWBOslIzckBxZ+ZIY9j3cvWYqRqB1Mcq8MsiopL1qYIVrq6OyydW2mNHFMPdHIceo5sNRRzg8DmDDA0vrn9uSvDlZq2nYF6cmC1S3u0QcWWujMaF0frET/WEre5uW22j7P8UHi/F8SrWuDZeJRRumYWThy/IJLeRaORaPVQ2fV8tcHK/G08vYw5zp4QnMo0MeAyYYmt2zlnFr++tvwYDGVVs4ppT0LPwzHZPTCkK3l1wALQJ60zChymzzn2S49K1ofxc8O/k8xzdoZd2LrkiULF5AELC3raQE2dbVMa4UPB+N+t4DWFsP45sEC3F8NHNkkcUaycq6np5OsHFoaM6Hq10H0C9I1k39kVwDLV8nvRAqtrIL3wHplhY3JLmVC4H2TzPJJsuH+PHn9VsEKnvAfUmyJiftZsAiHoynl2j2BQ7swsRFL4YKcYy+2CpbDUy5CTmleZ3mvIFp3j7l6sqDpDecMwtUmWHGct5C4zIwrrvfyMkmHy3zSyq9s6+ThWk1a11xtWkPA65gjNuUUXXR7eSzmsCl6UW/4d/4HedLlGnn72bJwtetnRSGKdRDOTXnGUGdTfJjAT4POPnPLQGDpvZs4q0wUVFpIcW2wliRMvOjCJO8rJoaepiXGXKnjO1tFHw/NdoYWZbKNU6s7sVWwklv3fCJTULAUi5uiAUzTVhU7PBAvTCaLofexuqq3myNr14NPSoSmROwizVjN+WEdoaHc6aqQs1V06z3A3typ4TlcZQVNsonslsGKvAfhRN4Sb0psXcjQ6xIbMXqfCSL1l9eWrIRDEHS2sjnADSP4o0VLFSwjhbkHBx+RgLPoShqAlgPpxDcyxKKeLMX3gV8Z/j0rn9q4MNIv/J1Zwc6HK4KVVAQ5gmBlCBpgvf6uyllEsUeKOwO/isJSrgpWQtl1RVS8ifeazvayYs2yp9njSUO0vMj7PXQuNnK1zq2DFUvWCxYCa5Lo7w3zDfNMWam4Ray4xkmPmTO6HljaXsAeZj2HB2YoA6xc/awJdQxxikSTdsLa34Z6wtVVgzXOgLVmEzBzVtJrXb/CyMcqqPmqUdR1NrDUkYCJh2qwWEFPg41oYuR79h5aXXnN1zpYSZX/g8DFZCVrywMLFKs1i+jp9l7o574Q+OXqYPVUCbDyOmtZERbkWdM6G9HTgLFfV6dWsHWwBqrENjQzbCifMjwyNqJRQzCyLRuzOon+dsHKpB/EiAcgllrmZ0X+Num1UuoHeJ8SY+TaYEFauWAIOceZkjWblPTwoFZ6dtJ4YFZL5yHcIoURN0UwK2o58WwnrWbApGT7UAG1dpK9PIJJJPfWB7QMVg0iA8hKZ1Y28s1hmjZ0Sn5ZrmhS6nHkbmYjE15IgAXYdGdIjvL3eU892SVLMXinIlrIhL3GcORlk99JjwJpGSw/zNDeFbkkIErrOPAvYm9xOIWjxZ9jOPJbKZPmqXerWfkp4u5vJXiUxkhiK0LKe9qCz873EvUk0QUiyjmb7JFxlo7pc0Gtb8OHRNhBGCxX2rJnYr9S4h4CXrGg5l9kSgXSuKlHMGkVLF/wNUkiI5ND3oi/KdFa2qnsTWNAFkNtiW/ElL9Y1QyWylwH8i5H+5iezxc/+pPwBjHTUvhhRSv+GyVaEo2ZkDgOZwErsdeCls0Pi6Ob6Ulcwhy/pbdeFiI9sjqcDqIbMZOFHLYPlm+vw5s3xBiRTHX6kEgZUTeN+EreR47kRS/K1ooIK0eHU1XfjlNqYkeviNvyN/1Yi0Ihqdoqf+Ym/tConShas5OxPo/nACtx48RyphmwPj1DLRWHTIUivkzsmc1fiLm/adatLtGKqvifQPnqrlhU/J9U+ciA5V17jFZZnUzgK3UoHS+sJOw0Q0nOAFbsCuoDIgTWqJ5kBWgNhfRJwG0V4JqKoJXpFrbqkiqVgfQolnWRXE0SwLmSYPmPOpgGUlWtFPeZF7yto8DFTeKL2xE4C1jJ/Tti+9CubW+8G9i7hmasK945xifKN9UE0q7Q3BhWkn9RTb/2QwwsN41DajCHmKBqZTJn+KYCaiuTJFqfDazIMV1hKaVl1LmWPwGLUELFrp7QrztWqiw7RRafC6w/xH0/SMnyeoMWXk0xu0YnMKq8LUjrcd7x+cDqRmXXIuZ2mSiGxRlb2Zgp/QoLlBHHydnBsoQqmVL7fNY5CyZGBs1tPYMQ5WDXL49vF6y0h8RQ8Bln8bE8+WkZCPPnjgjV3w5YqiVGLqai5Zx1XhowKpHcUlZ62MBOy4IlGk8l7syZBxeylPyIe4njlJ5pUglXBVZCbCwEJxnHd2F9nBUtkhkIkagtXkkYpEF0p8lVVUtWlNgTlZTEfZidW7T+pjz5Hcc3TXO/zewOqr4oO5q6IEhJxvUOO3LeaScZgjUTJLL6o/8Xb9OQm5wXrJmkxg5q68STYbXXkere9LNpSwaqyIr7PnCjKVuVYI3jxOlAIskzsVVtce45Op6UUEqeoSnH+MMIRwe+KA3nt1VX0TzHytERpl38xtILDIwAxrQjitv6E1AUgjXGSgAs+CUyu5Z4O4J/wReYlMby5AveVgrokDSeC4hE5CQiJ4cSZa/mRSaHAv4fitvK5+38i9ejnunGIYUIWHAIFaRWz0kh5NVb55lfyCj8NrIhdWCadV21T7iFUehISNqDjahpskr7dZwZuOJ/OTbbl613tSSBQfDJ26iDjYxW4G8KIT38u+/SeFipmgTJ+BpfMiEH5XAgCWatngHD8uSHucEj8+5IfMgDLKHk+AMk+Pw6hqrJFK6G7coj53216vU8nLXeavXeeUDRi0vSnmgpRhkTCMlfAjIV/BxCjSQrKASbysRW3g8pC9vy5TGvfo2Vu1aCnzi2JGFzRid1Vm0B/BsEtwLGP52hoWnTA/sukfADJAtLuBrTn0Rucc+dMGzXCX4vmG3gtaSbCupUbvvOYXTR2qgZWP67966ticxO9eKc7YBKHBdPGZpNCM6ph1eIlyl7mz+KHy9dVBQd7xMOtBn+hGZgBbf1m8L6frqWvvmb47TAu3QZsz7x3/+KcUGpgtTYMmCQW5Kch6f/P8MGKM/NGPGUHJJDn1aJjI8lU1VwacZsEip88M3Bj+HKW4un6Ow04TFFJqSFqWlxrlTR02EX9D/pujHi2wO5EI6aJOf9OS263pr9+MP7uzMxT6eRrcose3HyP+opO5bUXnXNYJOORWsOqTS1pogf9kTg0EuKvkuo/Ebxrp9xD+8xNXqaKr9eFm90T4DhjsStPmCzqCRt4S59AGWaeP9lvxA1gYqRGm512e42oF7rUYHCrGhC2fUO5WmyJmCRM2MVsGiO/5teRe54QbdCLUWlMmAKDKXiDcjXCzAmtfageolld3yTSQTU6R/0ZGpT6KG/xK7so1ggDSDtxgHZXAQtz8UgArqLkdQ3ROZ4zaEjum0RJtvHxy1i2bqKaxszKzzPA1eHVF8dwVSd207gnuI0mYYqkUWhU6QNpp97LMobJ1OEtuqllrGofpgm3cNZXVaWlNcIFNegtN9PcxEWLGX11r/IdjFVL7jsReWRtQxRf6uCIPH+J9X3jvAi9Yy0mYhu8P70Z8OepV562U6VW/+IN6LjOtOQ3xLu1/SU1cfQyiRHqp8EXtjqlZbdqdiMQD7peRlExOMQSYsGxTHEsbW0yOS1HKvJ1aAK6ARUdTCpK+ObJlU/QvO+UMQPjiL9o7+XOmaAN+qVV1cpEy4GA1E25icpXRJqNop8Bn+Ysxo2EZU1pQGjvuDiy9ji0m5qyoHgJw7iTjFdbDgeSlyzuNHD2HM3OXP01xWWPyQS+O7W3wVS3uJVAx+TKdhicSTKkFWhJ6tNSx7EUL2JFXhdfJq5yNewy0j/9DyNeM7DHqTA8vn6Wdx4MxZOpFxN0ZcI1zwz7y3RSIwhqHgW/ZjmiPXDopxujLQ8JwC9Ae0uNsN8SeWpqeywd7PKix5O0hLujkQ53dhPcrrklndhUunB1xeFhI+WbygGL65zkhNfhXt5EIWGzqX7GUdWXle46InvXtQa0E0Uu1XsY1zHrpLuy1UdsEzP2sUlIEdCx6l7Tb2tlep58IP76Kb9hDdVA5EpkwdsrrLbWZhtQWyt5EeJSzorcGtgqVMUps1iuoScTPNnlPCxeYVbz2QVJQi1F0dmBi7iqSVfI/xeAOvnzYGlapu4+mTdnU0H/iR4wx5uiV9JahTL5COTB4odOKKGT/HLZMyKYMEhfiCDSbHk5ZnY6u0tu+vOuisj71q97OEJv+WfrREP5gC83a2Gn2uSzEOvB5avmHpx7+NwkudPCwfD3dTK+1W67qmox2KylxrYKXvaDKJrsfrR0FO/IMEdZehvEEzLXx04PeBIMXR4ZfJhRUULc0qPaed1mC1I6m/mF+Pc21BmQ+/WbCqn36j0ELHzzDnpfYhNMr4xR6vKa3WK3Jbxs1FlKWKToSfXTrn5xMO9MRe+Dn6NDi5C3HKZddf2LLFh2++nFKzTFwdLYq6XePo+wl8pjA74+qJlHOAM/YZB+IALp2HOYaJ9/Y3YPljhfiyaV7hJv1RqrfHZeqRvm6Wps3rkbN331bWuX1DHLy8F1ueXB0t8TGBjsB71L4/WD/yffyRLOBJSap7X+g11Vv3BAN8SLO0DyD9giS635UHUdw2WdqjVA/w9wRIc7xVmjNLWq28KltBs02Ib/3cFS32rrG7wi/wms53fejV0+sE3pMHq3AdYVXOIfEFywkLugGex/Vp8abAe7gOsijMzvdfWBX7FcGTBIsHc7HtYm/IDMwg9el4dyTY6sQ7A+ZKrZEQgAdw3siGwFm7FB2mwyOxO9iG3yOGI01y2B9lgNtquR0+Pjw/SLXRjxmHF97QPX5fx8bahopp91HdK/X24ug+wMmR86HiG53RjvEmSo8YmLIcYj8M5MTXAWt8HWMnkuJzuUpyBnhx3phQaHeU7We9FtLR0iBshv/1GCP65XWQ6c/yi1SM0iQ2DB+Hch2iFY0H8/hrL8JZlWVmvaLrH8GezQDo0iNZdgOVGYK2KA3OCF1nGsg5YjJMZv6SnRUKwFhRUmr1mVgTWAuvjPjR8jMd6mN8qNq/JuM6ogjtR8Vp0oow/kmjh9oxgM1ovJYWmdSTrDnL4wYpna0d1s/3taI0ILik0zbWjiJWjzu+FpkmPBc/ceBkGyVyHMdAeGqehD90J8fCU323mfDwvrzNFKUQEnT7+qsbrlmuW5dYP2RwPihnU0c5zy1Rj6OCqJuTPO8FK/pgUFFJdXvAYh0T+MBN+evtuQkO1Rl1b0MzuhEfNxa5mMD8BeJbQ0r8xWIC71O0HAwGWgbZ7NeGYIseY3PjNwHL9jgpjMDCSpg5dXZCcHYX7qfxrtg0xcXef64P37/pzlXKE72/+rEdM+k+O08f3CFYtBZ/lwNB7xokyBvYgUGfGOqoNuCuwFvVchyOYr/Gkpz4r8IsnwgHe3I1+lz/Hlmqh896/pUK/YZySBIzUu0FrJNv2RAfSftwzywY02nCb9bN694KVhpqDFSTOwpHbvrayZ7m5QsEIyfuQLUO6og1xO3eU9aL7VhwWHVQ73ElO+qUdsPwMNvAoC98G3AXt4LYFVlT2NmfNNvbQe7sHtLYtglVCPCxx5+ujZcifhVVvXLDnQXx1ZlmvcZp0zdnKgJXZF88eTvD4QmAFJ3q4xpcVqzq2sMHUbt9I7odfSXVpmaH1tu1cEqzw6JXPemj938MoWE9PT6Pkq/Q/8dpG/z48PAVv2AZr9OD/4LYvQ2+PJtuJt4K3b7f9w0W6wqhAcltLcz3hFpZMkmlC7Qu4NFgBfT9/eHgwo7UW1GLT3JkqUmscfyFFFrnEr0iLitLGJrmCZNGJIMEsmXZqevwhiY/GE3aqWjgPqfEBl/Ccni00VgQ3pdBZRxUPSW5Y44LcAlhZFSaeJjNIs+MGAciLFPdh4xsDC1iV9pxVvwU+ei4TSZuC8PiWwJIagrRq9qTlcwE/WhCtFsE6wlrqScOFnkt7Kr5VyZI05pdT74FfCjcEFuPk3bM9aSA7abCmtyRZz5KlSA2eNNTqiflojBZqT7AmF3vS9NkLQq7WL7cDFpHMY2inuiNhkhNNpBMUcBtg1Tjdqe7cjtqj1tf4NsACkJ+rX3uQlbQQx3n1WwGrzrzXN1jW+101+7Q9A/x6A2CZuE4F867ekwa8qweW6sDyBsCSDWvDZe3rPGnASt1Uya7hPmwFrLrFk591nnS5en//o8wAN3S1UDvavV5Vbp0MC8BfJXU8PXqecnZ1bwCsuuWAWg3eBGBUGhaEB3nwabQrg1X/AE2thqtVqt59br/0yO81jK8KFjQ4NMVSZF0tgLLxzgjMZelxZs32IbreJgwJU1mwyhw6X1A9ncZ3WXVLvhqk1YRFozYCWcK0NCwMjwQzSzv8nDNM7ZYgZhpN8pEtVQTYlAGxDAEtabSdkiuCxetq1RiLhup9Ii1ZdiUOpWSR1m+QuGiekbaispSCU3DY//TWQTkclJ+K//f+ULzP4UHemJTgkMBQajDds404F0FrvRsMGKqWsbq0KJjtGZMUBRNQKdfxy1XDnRMdV4BJCmv+eqLLNUxJrPhhYXbkIXVQWJ7VWl4PLADoCsk64GK07UprLFfIzEHZUJPhxYbnsw0ipXSZp3bSlswgko+F7/7mGf0yVBukldpwSk9iStSkvYy1lGkqi6v6+c4GIL0zuFptgLXQdQHBYs0LlNuHJXRy8azoMld5So5XBGtVAIsHAX0HlgwNP+b7DfRA2xKHTEN12eUWwh1KkZx43ej00ZsOzCV+U5e/s+YSTM6i7j5sAayRcGRPz8+QME1j2HMjTEYMUzKrwybXA6voJ34AH6xinY1xEGYB+HyDxqr/N/mbVpvg8VXAondhmdKmNYmwaSKY8Poc2b+xZNe6lzmWoVpYDFRSAEnv2aHolgDC4xuMA/M3ltCEhnKRkwYYt/8po4WoGNcSvG7g66BPrvF1W+Mc26JohsV4D8qdcE3sVqk7n8iW1j7zRWt1FbAolVVVSDQu+lqCbByfb+BH4yUcRb1y3MZgjSSJBOoOhHrg/R4BXlx85L9pb7Sq4huD5UpWqFHRsCtSYzbnhS+lh1HwDWI9V6spWAVWWSAyBrxlpBmq3vQXp5jCKTuLgk9TeK7W8tJgFQ8eEOpjKG5EAVac2yNQUeM159ZF1GK1UMNdmN8dI5FL8PSPIVkB6NlctmB1yt9LuDV22qFGArEZWMe8yhJskCnISbX+4GYLX/BR7mlmXC0Cl9ZZeYbKwWIcwjJ/eo9ZhTHvlrV+VekCfwBtD1+s+575xD3LJCbacMzdQqX+4BV7CDgAfHZ1e2GwjvkrEa+Jmec2YhUrDthkuw1IwI4eefnp4cUlK6uyNEU8s5WP9Nblb+S15rlitnfEq+C5yHiVLKNc81H5Q8vEg2+OtyRWr8TNTy/gkmC94pxh3soUigXOlp4WApUer/QmlKTg6vhJW+W4qJFgZQrSdbkIwgRF08UoEw45Y4smO3iipX20MZlNHKxFBizJNIA/HlUopCRYYVKkwpzUmOf+b2SpB9SWyrIkT+4c5/peS/paWSVZuuBxjolo6a3YQ9QEq6zirVHDZwi1t7GOctOl2qR4xOGLItmX1gCs/GSCmXQpbTae5gfEgP9m7ELd+pCyvUzR0mR7eRpJlpvrWpIEa5nbXiN4HLPzDn6oozczZZxctiXb1N4ArOdc6cG7bOtjfnNMI/00JmKhzgTGdaU484D/Pb8QWJCvrzMQljWHuU64oTNRoknhRVvYnOnkaK2F/3TgImBlbX/wq8tOKBCI+DSjN5yNfubnNXGilS2WE2S2aNnbYAyreXaw/O6mYmA7CTgR4etnyow2HeGMjHI20OJ0kBLkObCL443uGymcy3cWsFh+8TB3o1WUNOmx6c9Bh2Sm9XP4KGPl4GeZZAGzus0/NcAVViD1ByQyD7PQ7NkBCyfkuSVU0zhGNjFqp0o7F20UL9oVrJysD9ZvHHbbeMDNYrbg8nEMVtm4C4eMGz7c2M0TcyLqg/XByXrqohXbZUfDx6PbypuvbSnRKuvHMoSc+bpgZR+5nimT9L+cipYvPBQVSPpBUTSTBEW6zs7CC1uyXDit69nf5X9DaEuj+sZwp7L6cTwPQDRsAzLU1KSrR8s1/XwmRxusLH+pFmNND1KiNbAs/6Ot8J/gi2TtCJzVGpLOm7+cZG02/t/932R84rcOtf7766//zZxDErRnYPSBCbUkL5l8YIR+RZgo6Fdvocwn/ib0Yf8P7OW2aLt5C/kAAAAASUVORK5CYII=" alt="Thcc swan logo">
+        <img class="hdr-logo" src="data:image/png;base64,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" alt="Thcc swan logo">
       </div>
     </div>
     <div class="datestrip">
@@ -572,6 +576,25 @@
         <input type="text" id="meMemoText" placeholder="一言メモ（任意）/ One-line memo" style="margin-top:10px">
         <button class="cta teal" id="meMemoSave" style="margin-top:10px"><span>✍️ きょうの記録を残す / Save today</span></button>
       </div>
+      <!-- ===== 積み上げ習慣 (v4.6)：毎日スクショしてストーリーに上げる用のカード＋入力欄 ===== -->
+      <div class="card">
+        <div class="sec-h"><span class="bar r"></span><span class="t">Stack</span><span class="jp">きょうの積み上げ — 習慣日記</span></div>
+        <div id="habCard" style="border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px 16px 10px;background:rgba(0,0,0,.28)"></div>
+        <div id="habInputs" style="margin-top:10px"></div>
+        <button class="cta teal" id="habSaveBtn" style="margin-top:10px"><span>🔥 きょうの積み上げを保存 / Save stack</span></button>
+        <div class="mini" style="margin-top:10px">習慣を追加：名前と単位を選んで＋。Σ/★で「累計⇄ベスト」切替、✎で累計を手修正（インスタの数字に合わせられます）。</div>
+        <div class="row2" style="margin-top:6px">
+          <input type="text" id="habNewName" placeholder="習慣名（例：HIIT・懸垂・逆立ち・コーヒー）" style="flex:2">
+          <select id="habNewUnit" style="flex:1">
+            <option value="回">回 / Times</option>
+            <option value="秒">秒 / Sec</option>
+            <option value="km">km</option>
+            <option value="分">分 / Min</option>
+            <option value="杯">杯 / Cups</option>
+          </select>
+          <button class="quick-btn tealtxt" id="habAddBtn" style="flex:0 0 76px">＋追加</button>
+        </div>
+      </div>
       <div class="card">
         <div class="sec-h"><span class="bar"></span><span class="t">Calendar</span><span class="jp" id="meCalLabel">参加カレンダー</span></div>
         <div class="quick-row" style="margin-bottom:8px"><button class="quick-btn" id="meCalPrev">◀ 前の月 / Prev</button><button class="quick-btn" id="meCalNext">次の月 / Next ▶</button></div>
@@ -659,7 +682,7 @@
     </div>
   </section>
 
-  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.5.2 Final 🌏</span></footer>
+  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.6 Final 🌏</span></footer>
 </div>
 
 <div id="updBar" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:99;background:var(--teal);color:#06232a;font-weight:800;padding:12px 14px;border-radius:12px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.5);cursor:pointer"></div>
@@ -783,7 +806,7 @@
   function jsave(k,v){ localStorage.setItem(k, JSON.stringify(v)); cloudPush(k,v); }
   // ---- 削除の記録（マージ同期で、消した記録が他の端末から復活しないように） ----
   var TOMBKEY="thcc_tombs_v1";
-  var tombs=jload(TOMBKEY,{s:{},m:{},p:{}}); if(!tombs.s)tombs.s={}; if(!tombs.m)tombs.m={}; if(!tombs.p)tombs.p={};
+  var tombs=jload(TOMBKEY,{s:{},m:{},p:{},h:{}}); if(!tombs.s)tombs.s={}; if(!tombs.m)tombs.m={}; if(!tombs.p)tombs.p={}; if(!tombs.h)tombs.h={};
   function saveTombs(){ localStorage.setItem(TOMBKEY, JSON.stringify(tombs)); }
   function tombSession(key){ tombs.s[key]=new Date().toISOString(); saveTombs(); }
   function tombMember(id){ tombs.m[id]=new Date().toISOString(); saveTombs(); }
@@ -812,6 +835,9 @@
   // ---- マイページ（自分・個人メモ） ----
   const MEKEY="thcc_me_v1", MKEY="thcc_memos_v1";
   let memos = jload(MKEY, []);               // [{id:member@date, member, date, mood, text, savedAt}]
+  // ---- 積み上げ習慣 (v4.6)：習慣の定義(def)と毎日の記録(log)を1つの配列で持つ ----
+  const HKEY="thcc_habits_v1";
+  let habits = jload(HKEY, []);              // def:{id,kind:"def",member,name,unit,mode:"sum"|"best",base,ord,arch,savedAt} / log:{id:def@date,kind:"log",member,def,date,val,savedAt}
 
   // ---- 名簿の重複統合 ----
   // 同じ人が別々に登録されてしまった分を、起動時に自動でまとめる（全端末に同期される）。
@@ -2570,6 +2596,7 @@
           "</div>";
       }).join("")
       : "<div class='mini'>まだ記録がありません。今日のきぶんから始めましょう。</div>";
+    renderHab(cur, me, mine);
   }
   document.getElementById("meCalPrev").onclick=()=>meCalShift(-1);
   document.getElementById("meCalNext").onclick=()=>meCalShift(1);
@@ -2590,6 +2617,98 @@
     renderMe(); toast("きょうの記録を残しました✍️",'t');
   };
 
+  /* ---------- 積み上げ習慣 (v4.6) ----------
+     日記のように「やったメニューと履歴」を残して、今日やったことと積み上げをシンプルに見る。
+     ・習慣は自分で追加（名前＋単位：回/秒/km/分/杯）
+     ・Σ=累計表示（HIITなど）／★=ベスト表示（逆立ちの秒など）を切替可能
+     ・✎で累計/ベストをいつでも手修正 → インスタの数字（HIIT 162回など）とピッタリ合わせられる
+     ・Runの距離は朝活の記録から自動で拾う。カードは毎日スクショしてストーリーへ📸 */
+  function habDefs(cur){ return habits.filter(h=>h.kind==="def"&&h.member===cur&&!h.arch).sort((a,b)=>(a.ord||0)-(b.ord||0)); }
+  function habLog(defId,date){ return habits.find(h=>h.kind==="log"&&h.def===defId&&h.date===date); }
+  function habSum(def){ return habits.filter(h=>h.kind==="log"&&h.def===def.id).reduce((a,h)=>a+(+h.val||0),0); }
+  function habTotal(def){ return Math.round(((+def.base||0)+habSum(def))*10)/10; }
+  function habBest(def){ return habits.filter(h=>h.kind==="log"&&h.def===def.id).reduce((a,h)=>Math.max(a,+h.val||0),Math.max(0,+def.base||0)); }
+  function renderHab(cur, me, mine){
+    const cardEl=document.getElementById("habCard"); if(!cardEl) return;
+    const t=todayStr(); const td=new Date();
+    const defs=habDefs(cur);
+    const km1=v=>Math.round(v*10)/10;
+    const kmToday=mine.filter(s=>s.date===t).reduce((a,s)=>a+(+s.dist||0),0);
+    const kmAll=mine.reduce((a,s)=>a+(+s.dist||0),0);
+    let rows="";
+    if(kmAll>0||kmToday>0) rows+="<div class='hab-line'><span class='hn'>🏃 Run</span><span class='ht'>今日 "+km1(kmToday)+"km</span><span class='hv'>通算 "+km1(kmAll)+"km</span></div>";
+    defs.forEach(df=>{
+      const lg=habLog(df.id,t); const tv=lg? +lg.val:0;
+      const right= df.mode==="best" ? "ベスト "+habBest(df)+df.unit : "累計 "+habTotal(df)+df.unit;
+      rows+="<div class='hab-line'><span class='hn'>"+esc(df.name)+"</span><span class='ht'>今日 "+(tv? "+"+tv+df.unit : "—")+"</span><span class='hv'>"+right+"</span></div>";
+    });
+    const memo=memos.find(x=>x.id===cur+"@"+t);
+    cardEl.innerHTML=
+      "<div style='display:flex;justify-content:space-between;align-items:baseline;gap:8px'><span style='font-weight:800;color:var(--teal)'>🔥 "+esc(me.name)+" の積み上げ</span><span class='mini' style='white-space:nowrap'>"+td.getFullYear()+"."+(td.getMonth()+1)+"."+td.getDate()+" ("+WD[td.getDay()]+")</span></div>"+
+      (rows || "<div class='mini' style='padding:8px 0'>下の＋から習慣を追加しましょう（例：HIIT 回・懸垂 回・逆立ち 秒）</div>")+
+      (memo&&(memo.mood||memo.text)? "<div class='mini' style='padding-top:8px'>📝 "+esc(memo.mood||"")+" "+esc(memo.text||"")+"</div>" : "")+
+      "<div class='mini' style='opacity:.5;padding-top:6px;text-align:right'>Run. Heat. Ice. Repeat. — Thcc.</div>";
+    // 入力欄（数字を入力している途中なら、同期による再描画で消さない）
+    const ib=document.getElementById("habInputs");
+    if(ib.contains(document.activeElement) && document.activeElement.tagName==="INPUT") return;
+    ib.innerHTML=defs.map(df=>{
+      const lg=habLog(df.id,t);
+      return "<div class='row2' style='margin-top:6px;align-items:center'>"+
+        "<span class='mini' style='flex:2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"+esc(df.name)+"</span>"+
+        "<input type='number' step='any' inputmode='decimal' data-hab='"+df.id+"' value='"+(lg? lg.val:"")+"' placeholder='今日' style='flex:1;min-width:60px'>"+
+        "<span class='mini' style='flex:0 0 24px'>"+df.unit+"</span>"+
+        "<button class='quick-btn' data-habmode='"+df.id+"' style='flex:0 0 40px'>"+(df.mode==="best"?"★":"Σ")+"</button>"+
+        "<button class='quick-btn' data-habedit='"+df.id+"' style='flex:0 0 40px'>✎</button>"+
+        "<button class='quick-btn' data-habdel='"+df.id+"' style='flex:0 0 40px'>🗑</button></div>";
+    }).join("");
+    ib.querySelectorAll("[data-habmode]").forEach(b=>b.onclick=function(){
+      const df=habits.find(h=>h.id===b.getAttribute("data-habmode")); if(!df) return;
+      df.mode= df.mode==="best"? "sum":"best"; df.savedAt=new Date().toISOString();
+      if(b.blur) b.blur(); jsave(HKEY,habits); renderMe();
+      toast(df.mode==="best"? "★ ベスト記録表示に切替":"Σ 累計表示に切替",'t');
+    });
+    ib.querySelectorAll("[data-habedit]").forEach(b=>b.onclick=function(){
+      const df=habits.find(h=>h.id===b.getAttribute("data-habedit")); if(!df) return;
+      const now= df.mode==="best"? habBest(df) : habTotal(df);
+      const v=prompt("「"+df.name+"」の"+(df.mode==="best"?"ベスト":"累計")+"を修正（"+df.unit+"）", now);
+      if(v===null) return; const nv=parseFloat(v); if(isNaN(nv)){ toast("数字を入れてください",'r'); return; }
+      if(df.mode==="best"){ df.base=nv; } else { df.base=(+df.base||0)+(nv-habTotal(df)); }
+      df.savedAt=new Date().toISOString();
+      if(b.blur) b.blur(); jsave(HKEY,habits); renderMe(); toast("修正しました✎",'t');
+    });
+    ib.querySelectorAll("[data-habdel]").forEach(b=>b.onclick=function(){
+      const df=habits.find(h=>h.id===b.getAttribute("data-habdel")); if(!df) return;
+      if(!confirm("「"+df.name+"」をカードから外しますか？\n記録は消えません。同じ名前で＋追加すると続きから再開できます。")) return;
+      df.arch=true; df.savedAt=new Date().toISOString();
+      if(b.blur) b.blur(); jsave(HKEY,habits); renderMe();
+    });
+  }
+  document.getElementById("habSaveBtn").onclick=function(){
+    const cur=meId(); if(!cur || !roster.find(m=>m.id===cur)){ toast("先に自分の名前を選んでください",'r'); return; }
+    const t=todayStr(); let any=false;
+    document.querySelectorAll("#habInputs [data-hab]").forEach(inp=>{
+      const id=inp.getAttribute("data-hab"); const v=inp.value.trim(); const lid=id+"@"+t;
+      habits=habits.filter(h=>h.id!==lid);
+      if(v!=="" && !isNaN(parseFloat(v))){ habits.push({id:lid,kind:"log",member:cur,def:id,date:t,val:parseFloat(v),savedAt:new Date().toISOString()}); any=true; }
+    });
+    if(document.activeElement&&document.activeElement.blur) document.activeElement.blur();
+    jsave(HKEY,habits); renderMe();
+    toast(any? "きょうの積み上げを保存しました🔥":"きょうの記録をクリアしました",'t');
+  };
+  document.getElementById("habAddBtn").onclick=function(){
+    const cur=meId(); if(!cur || !roster.find(m=>m.id===cur)){ toast("先に自分の名前を選んでください",'r'); return; }
+    const nameEl=document.getElementById("habNewName"); const name=nameEl.value.trim();
+    if(!name){ toast("習慣名を入れてください（例：HIIT）",'r'); return; }
+    const unit=document.getElementById("habNewUnit").value;
+    const old=habits.find(h=>h.kind==="def"&&h.member===cur&&h.arch&&h.name===name);
+    if(old){ old.arch=false; old.savedAt=new Date().toISOString(); }
+    else if(habits.some(h=>h.kind==="def"&&h.member===cur&&!h.arch&&h.name===name)){ toast("同じ名前の習慣があります",'r'); return; }
+    else habits.push({id:"h_"+uid(),kind:"def",member:cur,name:name,unit:unit,mode:(unit==="秒"?"best":"sum"),base:0,ord:Date.now(),savedAt:new Date().toISOString()});
+    nameEl.value="";
+    jsave(HKEY,habits); renderMe();
+    toast("習慣を追加しました🌱 ✎で累計を今の数字に合わせられます",'t');
+  };
+
   function refreshAll(){ renderHeader(); renderRecordState(); renderRecent(); renderStats(); renderProgress(); renderCrew(); renderSiteList(); renderMe(); }
 
   /* ---------- cloud sync (Firebase Firestore / v2.1 マージ方式) ----------
@@ -2599,10 +2718,10 @@
      ・削除は tombstone（削除時刻の記録）で伝搬し、古いデータから復活しない
      ・どの端末に残っているデータも、開いた瞬間にクラウドへ合流して復元される */
   var db=null;
-  var CLOUD_DOCS={}; CLOUD_DOCS[RKEY]="roster"; CLOUD_DOCS[TKEY]="sessions"; CLOUD_DOCS[MKEY]="memos";
+  var CLOUD_DOCS={}; CLOUD_DOCS[RKEY]="roster"; CLOUD_DOCS[TKEY]="sessions"; CLOUD_DOCS[MKEY]="memos"; CLOUD_DOCS[HKEY]="habits";
   function keyOf(k,r){ return k===TKEY ? skey(r) : r.id; }
   function timeOf(r){ return r.savedAt || r.updatedAt || ""; }
-  function tombOf(k){ return k===TKEY ? tombs.s : (k===RKEY ? tombs.m : tombs.p); }
+  function tombOf(k){ return k===TKEY ? tombs.s : (k===RKEY ? tombs.m : (k===HKEY ? tombs.h : tombs.p)); }
   function canonArr(k,arr){ return JSON.stringify([...(arr||[])].sort((a,b)=> keyOf(k,a)<keyOf(k,b)?-1:1)); }
   function canonTomb(t){ return JSON.stringify(Object.keys(t||{}).sort().map(x=>[x,t[x]])); }
   function mergeArr(k,local,remote){
@@ -2648,14 +2767,14 @@
             const myTomb=tombOf(k);
             const mergedTomb=mergeTombs(myTomb,rtombs);
             const tombChangedLocally = canonTomb(mergedTomb)!==canonTomb(myTomb);
-            if(k===TKEY) tombs.s=mergedTomb; else if(k===RKEY) tombs.m=mergedTomb; else tombs.p=mergedTomb;
+            if(k===TKEY) tombs.s=mergedTomb; else if(k===RKEY) tombs.m=mergedTomb; else if(k===HKEY) tombs.h=mergedTomb; else tombs.p=mergedTomb;
             if(tombChangedLocally) saveTombs();
             // 2) データを合体（新しい方が勝つ・削除済みは復活しない）
             const local=jload(k,[]);
             const merged=mergeArr(k,local,remote);
             // 3) この端末に反映
             if(canonArr(k,merged)!==canonArr(k,local)){
-              if(k===RKEY) roster=merged; else if(k===TKEY) sessions=merged; else memos=merged;
+              if(k===RKEY) roster=merged; else if(k===TKEY) sessions=merged; else if(k===HKEY) habits=merged; else memos=merged;
               localStorage.setItem(k, JSON.stringify(merged));
               refreshAll();
               setCloudStatus("☁️ 同期OK（最終受信 "+new Date().toLocaleTimeString("ja-JP")+"）",true);
@@ -2682,7 +2801,7 @@
   function thaiToday(){ return new Date(Date.now()+7*3600*1000).toISOString().slice(0,10); }
   function snapPayload(){
     return { date:thaiToday(), sessions:JSON.stringify(sessions), roster:JSON.stringify(roster),
-      memos:JSON.stringify(memos), tombs:JSON.stringify(tombs),
+      memos:JSON.stringify(memos), habits:JSON.stringify(habits), tombs:JSON.stringify(tombs),
       nSes:sessions.length, nMem:roster.length, savedAt:new Date().toISOString(), by:(config.host||"") };
   }
   function renderSnapStatus(){
@@ -2725,15 +2844,16 @@
   function restoreSnapshot(p){
     if(!confirm(p.date+" のスナップショットから復元しますか？\n今あるデータは消えません。この日にあって今は消えている記録・メンバー・メモだけが戻ります。")) return;
     try{
-      const sSes=JSON.parse(p.sessions||"[]"), sRos=JSON.parse(p.roster||"[]"), sMem=JSON.parse(p.memos||"[]");
+      const sSes=JSON.parse(p.sessions||"[]"), sRos=JSON.parse(p.roster||"[]"), sMem=JSON.parse(p.memos||"[]"), sHab=JSON.parse(p.habits||"[]");
       normSessions(sSes);
       let added=0;
       sRos.forEach(function(m){ if(m&&m.id&&!roster.some(x=>x.id===m.id)){ roster.push(m); delete tombs.m[m.id]; added++; } });
       sSes.forEach(function(r){ const k=skey(r); if(!sessions.some(s=>skey(s)===k)){ sessions.push(r); delete tombs.s[k]; added++; } });
       sMem.forEach(function(m){ if(m&&m.id&&!memos.some(x=>x.id===m.id)){ memos.push(m); delete tombs.p[m.id]; added++; } });
+      sHab.forEach(function(h){ if(h&&h.id&&!habits.some(x=>x.id===h.id)){ habits.push(h); delete tombs.h[h.id]; added++; } });
       sessions.sort((a,b)=> a.date<b.date?1:(a.date>b.date?-1:(skey(a)<skey(b)?-1:1)));
       saveTombs();
-      jsave(RKEY,roster); jsave(TKEY,sessions); jsave(MKEY,memos); // jsaveがクラウドにも送るので全端末に行き渡る
+      jsave(RKEY,roster); jsave(TKEY,sessions); jsave(MKEY,memos); jsave(HKEY,habits); // jsaveがクラウドにも送るので全端末に行き渡る
       refreshAll();
       toast(added? "復元完了："+added+"件を取り戻しました🕰" : "差分なし：データは全部そろっています✅",'t');
     }catch(e){ console.warn(e); toast("復元に失敗しました",'r'); }
@@ -2754,7 +2874,7 @@
      アプリが前面に戻ってくるたびに最新バージョンを確認。
      新しい版があれば：入力途中でなければそのまま自動リロード、
      入力途中なら壊さないように「タップで更新」バナーを出す。 */
-  const APP_VER="4.5.2";
+  const APP_VER="4.6";
   let lastVerCheck=Date.now(); // 起動直後は最新なのでスキップ
   function isTyping(){
     try{
@@ -2765,7 +2885,9 @@
         document.getElementById("attSearch").value!=="" ||
         document.getElementById("sesGuestNote").value!=="" ||
         document.getElementById("sesSpot").value!=="" ||
-        document.getElementById("meMemoText").value!=="";
+        document.getElementById("meMemoText").value!=="" ||
+        document.getElementById("habNewName").value!=="" ||
+        [...document.querySelectorAll("#habInputs [data-hab]")].some(i=>i===document.activeElement&&i.value!=="");
     }catch(e){ return true; } // 判定できないときは安全側（勝手にリロードしない）
   }
   function doReload(){ try{ window.location.reload(); }catch(e){ try{ location.reload(); }catch(e2){} } }
