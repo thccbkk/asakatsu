@@ -336,22 +336,21 @@
         <!-- v3.8: datalistがiOSで不安定なため、拠点はタップで選べるチップを常時表示 -->
         <div class="chips" id="siteChips" style="margin:-6px 0 10px"></div>
         <div class="chips" id="recorderChips" style="margin:0 0 14px"></div>
-        <!-- v3.9: ラン距離（任意）— ソロランナーの積み上げ記録用 -->
-        <div class="row2" style="margin:0 0 14px">
-          <div><label class="fld">📌 Spot / 場所（任意）</label><input type="text" id="sesSpot" placeholder="例：Lumpini Park" list="spotList"></div>
-          <div id="distBox" style="flex:0 0 34%"><label class="fld">🏃 距離 km（任意）</label><input type="number" id="sesDist" step="0.1" min="0" inputmode="decimal" placeholder="5.2"></div>
+        <div style="margin:0 0 8px"><label class="fld">📌 Spot / 場所（任意）</label><input type="text" id="sesSpot" placeholder="例：Lumpini Park" list="spotList"></div>
+        <!-- v4.5.1: 位置チェックインはSpot欄のすぐ下へ（場所の入力がここで完結する流れに） -->
+        <div class="quick-row">
+          <button class="quick-btn" id="geoBtn">📍 現在地 / Check-in（任意）</button>
+          <button class="quick-btn" id="gmapBtn">🗺 Gmapから選ぶ / Pick on map</button>
         </div>
-        <!-- v4.0: ☕ カフェメモ — COFFEEを選んだ日はカフェ名を残せる（ソロコーヒーの記録もおもろい） -->
-        <div id="cafeBox" style="display:none;margin:0 0 14px">
-          <label class="fld">☕ Cafe / カフェ名（任意）</label>
-          <input type="text" id="sesCafe" placeholder="例：Sarnies Bangkok">
-          <div class="chips" id="cafeChips" style="margin-top:6px"></div>
+        <div id="gmapBox" style="display:none;margin-top:8px">
+          <div class="mini">Googleマップで場所を開いて「共有 → リンクをコピー」し、下に貼り付けてください。URLのほか「13.75, 100.50」の座標や場所名だけでもOK。</div>
+          <input type="text" id="gmapInput" placeholder="https://maps.app.goo.gl/… を貼り付け">
+          <div class="quick-row" style="margin-top:6px">
+            <button class="quick-btn" id="gmapOpen">🌐 Googleマップを開く</button>
+            <button class="quick-btn" id="gmapApply">✅ この場所にする</button>
+          </div>
         </div>
-        <!-- v4.2: 💪 STRENGTH選択時だけ出る筋トレメニュー（散らからないよう部位チップのみ） -->
-        <div id="strBox" style="display:none;margin:0 0 14px">
-          <label class="fld">💪 筋トレ内容（任意）/ Strength menu</label>
-          <div class="chips" id="strChips"></div>
-        </div>
+        <div class="mini" id="geoMini" style="margin:0 0 14px"></div>
         <datalist id="spotList"></datalist>
         <datalist id="siteList">
           <option value="Bangkok"></option>
@@ -400,6 +399,21 @@
         <div class="flow">WALK<span class="a">/</span>RUN<span class="a">→</span>HIIT<span class="a">→</span>ICE<span class="a">→</span>REPEAT</div>
         <div class="chips" id="menuChips"></div>
 
+        <!-- v4.5.1: メニューに応じた入力欄は「メニュー選択の後」に出す（上から入力する流れに合わせた） -->
+        <!-- 🏃🚶選択 → 距離欄 -->
+        <div id="distBox" style="display:none;margin:14px 0 0"><label class="fld">🏃 距離 km（任意）</label><input type="number" id="sesDist" step="0.1" min="0" inputmode="decimal" placeholder="5.2"></div>
+        <!-- 💪 STRENGTH選択時だけ出る筋トレメニュー（散らからないよう部位チップのみ） -->
+        <div id="strBox" style="display:none;margin:14px 0 0">
+          <label class="fld">💪 筋トレ内容（任意）/ Strength menu</label>
+          <div class="chips" id="strChips"></div>
+        </div>
+        <!-- ☕ カフェメモ — COFFEEを選んだ日はカフェ名を残せる（ソロコーヒーの記録もおもろい） -->
+        <div id="cafeBox" style="display:none;margin:14px 0 0">
+          <label class="fld">☕ Cafe / カフェ名（任意）</label>
+          <input type="text" id="sesCafe" placeholder="例：Sarnies Bangkok">
+          <div class="chips" id="cafeChips" style="margin-top:6px"></div>
+        </div>
+
         <div style="height:18px"></div>
 
         <label class="fld">🥊 GOCHI Janken ｜ GOCHIじゃんけん 参加者</label>
@@ -421,20 +435,6 @@
 
         <label class="fld">NOTE — アサカツ㌔ク。</label>
         <textarea id="sesNote" placeholder="今朝のひとこと、MENU詳細（走った距離、Rep数など、なんでもアサカツキロク。）/ Today's word, distance, reps — anything!"></textarea>
-
-        <div class="quick-row" style="margin-top:12px">
-          <button class="quick-btn" id="geoBtn">📍 現在地 / Check-in（任意）</button>
-          <button class="quick-btn" id="gmapBtn">🗺 Gmapから選ぶ / Pick on map</button>
-        </div>
-        <div id="gmapBox" style="display:none;margin-top:8px">
-          <div class="mini">Googleマップで場所を開いて「共有 → リンクをコピー」し、下に貼り付けてください。URLのほか「13.75, 100.50」の座標や場所名だけでもOK。</div>
-          <input type="text" id="gmapInput" placeholder="https://maps.app.goo.gl/… を貼り付け">
-          <div class="quick-row" style="margin-top:6px">
-            <button class="quick-btn" id="gmapOpen">🌐 Googleマップを開く</button>
-            <button class="quick-btn" id="gmapApply">✅ この場所にする</button>
-          </div>
-        </div>
-        <div class="mini" id="geoMini"></div>
 
         <div style="height:14px"></div>
         <button class="cta" id="saveBtn"><span>▶ 記録する / SAVE</span></button>
@@ -657,7 +657,7 @@
     </div>
   </section>
 
-  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.5 Final 🌏</span></footer>
+  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.5.1 Final 🌏</span></footer>
 </div>
 
 <div id="updBar" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:99;background:var(--teal);color:#06232a;font-weight:800;padding:12px 14px;border-radius:12px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.5);cursor:pointer"></div>
@@ -907,6 +907,7 @@
     dupIds.forEach(id=>tombMember(id));
     roster=roster.filter(m=>!remap[m.id]);
     jsave(RKEY,roster); jsave(TKEY,sessions); jsave(MKEY,memos);
+    return true;
   }
 
   // ---- 拠点・入力者 ----
@@ -963,10 +964,19 @@
     sessions.sort((a,b)=>b.date.localeCompare(a.date));
     jsave(RKEY,roster); jsave(TKEY,sessions);
   }
-  runRepair();
-  runRenames();
-  runEnsureMembers();
-  runRosterMerge();
+  function runMigrations(){
+    runRepair();
+    runRenames();
+    runEnsureMembers();
+    return runRosterMerge(); // ダブりを統合したら true
+  }
+  runMigrations();
+  // v4.5.1: クラウド同期でデータが届いた後にも名寄せを実行（新URL移行でのダブり対策）
+  var migT=null;
+  function scheduleMigrations(){
+    clearTimeout(migT);
+    migT=setTimeout(function(){ if(runMigrations()) refreshAll(); },800);
+  }
 
   const uid=()=> "m"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   const WD=["日","月","火","水","木","金","土"];
@@ -2645,6 +2655,7 @@
               localStorage.setItem(k, JSON.stringify(merged));
               refreshAll();
               setCloudStatus("☁️ 同期OK（最終受信 "+new Date().toLocaleTimeString("ja-JP")+"）",true);
+              scheduleMigrations(); // v4.5.1: 同期後にも名寄せ（ダブり自動統合）
             }
             // 4) クラウド側に足りない分があれば送り返す
             if(canonArr(k,merged)!==canonArr(k,remote) || canonTomb(mergedTomb)!==canonTomb(rtombs)){
@@ -2739,7 +2750,7 @@
      アプリが前面に戻ってくるたびに最新バージョンを確認。
      新しい版があれば：入力途中でなければそのまま自動リロード、
      入力途中なら壊さないように「タップで更新」バナーを出す。 */
-  const APP_VER="4.5";
+  const APP_VER="4.5.1";
   let lastVerCheck=Date.now(); // 起動直後は最新なのでスキップ
   function isTyping(){
     try{
