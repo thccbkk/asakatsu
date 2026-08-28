@@ -679,7 +679,7 @@
     </div>
   </section>
 
-  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.7 Final 🌏</span></footer>
+  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.8 Final 🌏</span></footer>
 </div>
 
 <div id="updBar" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:99;background:var(--teal);color:#06232a;font-weight:800;padding:12px 14px;border-radius:12px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.5);cursor:pointer"></div>
@@ -2624,6 +2624,9 @@
     const kmToday=mine.filter(s=>s.date===t).reduce((a,s)=>a+(+s.dist||0),0);
     const kmAll=mine.reduce((a,s)=>a+(+s.dist||0),0);
     let rows="";
+    // v4.8: 🌅 朝活は参加記録から自動カウント（今日参加したか＋通算回数）
+    const attToday=mine.some(s=>s.date===t);
+    rows+="<div class='hab-line'><span class='hn'>🌅 朝活</span><span class='ht'>今日 "+(attToday?"✅":"—")+"</span><span class='hv'>通算 "+mine.length+"回</span></div>";
     if(kmAll>0||kmToday>0) rows+="<div class='hab-line'><span class='hn'>🏃 Run</span><span class='ht'>今日 "+km1(kmToday)+"km</span><span class='hv'>通算 "+km1(kmAll)+"km</span></div>";
     defs.forEach(df=>{
       const lg=habLog(df.id,t); const tv=lg? +lg.val:0;
@@ -2633,7 +2636,8 @@
     const memo=memos.find(x=>x.id===cur+"@"+t);
     cardEl.innerHTML=
       "<div style='display:flex;justify-content:space-between;align-items:baseline;gap:8px'><span style='font-weight:800;color:var(--teal)'>🔥 "+esc(me.name)+" の積み上げ</span><span class='mini' style='white-space:nowrap'>"+td.getFullYear()+"."+(td.getMonth()+1)+"."+td.getDate()+" ("+WD[td.getDay()]+")</span></div>"+
-      (rows || "<div class='mini' style='padding:8px 0'>下の＋から習慣を追加しましょう（例：HIIT 回・懸垂 回・逆立ち 秒）</div>")+
+      rows+
+      (defs.length? "" : "<div class='mini' style='padding:8px 0'>下の＋から習慣を追加しましょう（例：HIIT 回・懸垂 回・逆立ち 秒）</div>")+
       (memo&&(memo.mood||memo.text)? "<div class='mini' style='padding-top:8px'>📝 "+esc(memo.mood||"")+" "+esc(memo.text||"")+"</div>" : "")+
       "<div class='mini' style='opacity:.5;padding-top:6px;text-align:right'>Run. Heat. Ice. Repeat. — Thcc.</div>";
     // 入力欄（数字を入力している途中なら、同期による再描画で消さない）
@@ -2698,6 +2702,8 @@
     const kmToday=mine.filter(s=>s.date===t).reduce((a,s)=>a+(+s.dist||0),0);
     const kmAll=mine.reduce((a,s)=>a+(+s.dist||0),0);
     const lines=["🔥 "+me.name+" の積み上げ｜"+td.getFullYear()+"."+(td.getMonth()+1)+"."+td.getDate()+" ("+WD[td.getDay()]+")"];
+    // v4.8: 🌅 朝活は参加記録から自動カウント
+    lines.push("🌅 朝活｜今日 "+(mine.some(s=>s.date===t)?"✅":"—")+"｜通算 "+mine.length+"回");
     if(kmAll>0||kmToday>0) lines.push("🏃 Run｜今日 "+km1(kmToday)+"km｜通算 "+km1(kmAll)+"km");
     habDefs(cur).forEach(df=>{
       const lg=habLog(df.id,t); const tv=lg? +lg.val:0;
@@ -2898,7 +2904,7 @@
      アプリが前面に戻ってくるたびに最新バージョンを確認。
      新しい版があれば：入力途中でなければそのまま自動リロード、
      入力途中なら壊さないように「タップで更新」バナーを出す。 */
-  const APP_VER="4.7";
+  const APP_VER="4.8";
   let lastVerCheck=Date.now(); // 起動直後は最新なのでスキップ
   function isTyping(){
     try{

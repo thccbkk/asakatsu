@@ -1,5 +1,5 @@
 // 朝活地球 Asakatsu Earth — Service Worker (network-first, offline fallback)
-const CACHE = "asakatsu-v4.7";
+const CACHE = "asakatsu-v4.8";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
