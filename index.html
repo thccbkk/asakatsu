@@ -222,8 +222,10 @@
   .hist-date .d{font-family:"Anton",Impact,sans-serif;transform:skewX(-8deg);font-size:18px;color:var(--teal)}
   .hist-date .m{font-size:9px;color:var(--muted)}
   .hist-body{flex:1;min-width:0}
-  .hist-top{font-size:12.5px;font-weight:800}
+  .hist-top{font-size:12.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hist-top .sub{font-weight:400;font-size:10px;color:var(--muted2)}
   .hist-att{font-size:11.5px;color:var(--muted);margin-top:1px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hist-note{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical} /* 一言は最大2行まで見せる (v4.5.2) */
   .hist-treat{font-size:11.5px;margin-top:2px}
   .hist-treat .who{color:var(--red);font-weight:800}
   .hist-acts{display:grid;grid-template-columns:auto auto;gap:3px 10px;align-self:center;flex-shrink:0}
@@ -657,7 +659,7 @@
     </div>
   </section>
 
-  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.5.1 Final 🌏</span></footer>
+  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.5.2 Final 🌏</span></footer>
 </div>
 
 <div id="updBar" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:99;background:var(--teal);color:#06232a;font-weight:800;padding:12px 14px;border-radius:12px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.5);cursor:pointer"></div>
@@ -1774,13 +1776,15 @@
       let treat="";
       if(s.winnerId) treat="<div class='hist-treat'>🏆 <span class='who'>"+esc(memberName(s.winnerId))+"</span> が "+yen(s.amount)+" 奢り</div>";
       const ph=(s.phases||["run","hiit","ice"]).map(k=>{const x=MENU.find(m=>m.k===k);return x?x.e:"";}).join("");
-      const meta="📍"+esc(s.site||DEFAULT_SITE)+(s.spot?"・"+esc(s.spot):"")+(s.dist?" ・🏃"+s.dist+"km":"")+(s.cafe?" ・☕"+esc(s.cafe):"")+(s.strTags&&s.strTags.length?" ・💪"+s.strTags.map(esc).join("/"):"")+(s.guestN?" ・👤+"+s.guestN:"")+(s.hush?" ・🔒":"")+(s.slot?" ・🕐"+esc(s.time||"05:30"):"")+(s.recorder?" ・✍️"+esc(s.recorder):"");
+      // v4.5.2: ☕カフェを📍のすぐ隣へ（切れずに見える）。🕐・✍️は1行目の余白に移動して行を圧迫しない
+      const meta="📍"+esc(s.site||DEFAULT_SITE)+(s.spot?"・"+esc(s.spot):"")+(s.cafe?" ・☕"+esc(s.cafe):"")+(s.dist?" ・🏃"+s.dist+"km":"")+(s.strTags&&s.strTags.length?" ・💪"+s.strTags.map(esc).join("/"):"")+(s.guestN?" ・👤+"+s.guestN:"")+(s.hush?" ・🔒":"");
+      const sub=(s.slot?"🕐"+esc(s.time||"05:30"):"")+(s.recorder?(s.slot?"・":"")+"✍️"+esc(s.recorder):"");
       el.innerHTML=
         "<div class='hist-date'><div class='d'>"+d.getDate()+"</div><div class='m'>"+(d.getMonth()+1)+"月("+WD[d.getDay()]+")</div></div>"+
-        "<div class='hist-body'><div class='hist-top'>"+s.attendees.length+"名参加 <span style='font-weight:400'>"+ph+"</span></div>"+
+        "<div class='hist-body'><div class='hist-top'>"+s.attendees.length+"名参加 <span style='font-weight:400'>"+ph+"</span>"+(sub?" <span class='sub'>"+sub+"</span>":"")+"</div>"+
           "<div class='hist-att'>"+meta+"</div>"+
           "<div class='hist-att'>"+esc(names)+(s.guestNote?"　👤"+esc(s.guestNote):"")+"</div>"+treat+
-          (s.note?"<div class='hist-att'>📝 "+esc(s.note)+"</div>":"")+"</div>"+
+          (s.note?"<div class='hist-att hist-note'>📝 "+esc(s.note)+"</div>":"")+"</div>"+
         "<div class='hist-acts'><button data-p='"+key+"'>📣</button><button data-s='"+key+"'>📸</button><button class='e' data-e='"+key+"'>✏️</button><button data-x='"+key+"'>✕</button></div>";
       c.appendChild(el);
     });
@@ -2750,7 +2754,7 @@
      アプリが前面に戻ってくるたびに最新バージョンを確認。
      新しい版があれば：入力途中でなければそのまま自動リロード、
      入力途中なら壊さないように「タップで更新」バナーを出す。 */
-  const APP_VER="4.5.1";
+  const APP_VER="4.5.2";
   let lastVerCheck=Date.now(); // 起動直後は最新なのでスキップ
   function isTyping(){
     try{
