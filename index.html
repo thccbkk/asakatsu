@@ -96,6 +96,13 @@
   .card{background:linear-gradient(180deg,var(--panel2) 0%,var(--panel) 55%);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 10px 26px rgba(0,0,0,.28)}
   .card.flat{background:transparent;border:none;padding:0;box-shadow:none}
   .sec-h{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  /* v4.10: マイタブの折りたたみカード（普段はStack中心のすっきり画面に） */
+  details.card summary{cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent}
+  details.card summary::-webkit-details-marker{display:none}
+  details.card summary .sec-h{margin-bottom:0}
+  details.card[open] summary .sec-h{margin-bottom:12px}
+  details.card summary .fold{margin-left:auto;opacity:.5;transition:transform .2s}
+  details.card[open] summary .fold{transform:rotate(180deg)}
   .sec-h .t{font-family:"Anton",Impact,sans-serif;transform:skewX(-8deg);font-size:19px;letter-spacing:.02em}
   .sec-h .jp{font-size:10px;color:var(--muted);letter-spacing:.14em;margin-left:auto;font-weight:700}
   .bar{width:4px;height:18px;background:var(--teal);border-radius:2px;transform:skewX(-8deg)}
@@ -407,7 +414,7 @@
 
         <!-- v4.5.1: メニューに応じた入力欄は「メニュー選択の後」に出す（上から入力する流れに合わせた） -->
         <!-- 🏃🚶選択 → 距離欄 -->
-        <div id="distBox" style="display:none;margin:14px 0 0"><label class="fld">🏃 距離 km（任意）</label><input type="number" id="sesDist" step="0.1" min="0" inputmode="decimal" placeholder="5.2"></div>
+        <div id="distBox" style="display:none;margin:14px 0 0"><label class="fld">🏃🚶 距離 km（任意）— RUN/WALKの距離として記録</label><input type="number" id="sesDist" step="0.1" min="0" inputmode="decimal" placeholder="5.2"></div>
         <!-- 💪 STRENGTH選択時だけ出る筋トレメニュー（散らからないよう部位チップのみ） -->
         <div id="strBox" style="display:none;margin:14px 0 0">
           <label class="fld">💪 筋トレ内容（任意）/ Strength menu</label>
@@ -557,8 +564,13 @@
   <section class="tabpage" id="tab-me">
     <div class="card">
       <div class="sec-h"><span class="bar"></span><span class="t">My Page</span><span class="jp">マイページ</span></div>
-      <label class="fld">あなたは誰？ / Who are you?（この端末に記憶されます）</label>
+      <label class="fld" id="meWhoLabel">あなたは誰？ / Who are you?（この端末に記憶されます）</label>
       <select id="meSelect"></select>
+      <!-- v4.10: マイページは自分専用 — 選択後は名前だけ表示してプルダウンを隠す -->
+      <div id="meWhoRow" style="display:none;align-items:center;justify-content:space-between;gap:10px">
+        <span id="meWhoName" style="font-weight:800;font-size:16px"></span>
+        <button class="quick-btn" id="meWhoChange" style="flex:0 0 auto">変更 / Change</button>
+      </div>
     </div>
     <div id="meBody" style="display:none">
       <div class="tiles">
@@ -592,19 +604,20 @@
           <button class="quick-btn tealtxt" id="habAddBtn" style="flex:0 0 76px">＋追加</button>
         </div>
       </div>
-      <div class="card">
-        <div class="sec-h"><span class="bar"></span><span class="t">Calendar</span><span class="jp" id="meCalLabel">参加カレンダー</span></div>
+      <!-- v4.10: 毎日使うのはStackだけなので、下の3カードは折りたたみ（タップで開く） -->
+      <details class="card">
+        <summary><div class="sec-h"><span class="bar"></span><span class="t">Calendar</span><span class="jp" id="meCalLabel">参加カレンダー</span><span class="fold">▼</span></div></summary>
         <div class="quick-row" style="margin-bottom:8px"><button class="quick-btn" id="meCalPrev">◀ 前の月 / Prev</button><button class="quick-btn" id="meCalNext">次の月 / Next ▶</button></div>
         <div id="meCal" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:14px"></div>
-      </div>
-      <div class="card">
-        <div class="sec-h"><span class="bar r"></span><span class="t">Monthly</span><span class="jp">月別の参加（タップでカレンダー表示）</span></div>
+      </details>
+      <details class="card">
+        <summary><div class="sec-h"><span class="bar r"></span><span class="t">Monthly</span><span class="jp">月別の参加（タップでカレンダー表示）</span><span class="fold">▼</span></div></summary>
         <div id="meMonthly"></div>
-      </div>
-      <div class="card">
-        <div class="sec-h"><span class="bar r"></span><span class="t">Diary</span><span class="jp">運動日記 — 参加＋一言メモ</span></div>
+      </details>
+      <details class="card">
+        <summary><div class="sec-h"><span class="bar r"></span><span class="t">Diary</span><span class="jp">運動日記 — 参加＋一言メモ</span><span class="fold">▼</span></div></summary>
         <div id="meDiary"></div>
-      </div>
+      </details>
     </div>
   </section>
 
@@ -679,7 +692,7 @@
     </div>
   </section>
 
-  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.9 Final 🌏</span></footer>
+  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.10 Final 🌏</span></footer>
 </div>
 
 <div id="updBar" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:99;background:var(--teal);color:#06232a;font-weight:800;padding:12px 14px;border-radius:12px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.5);cursor:pointer"></div>
@@ -1016,6 +1029,13 @@
   function effWebhook(){ return (config.webhook||"").trim() || BUILTIN_WEBHOOK; }
 
   const MENU=[{k:"walk",e:"🚶",l:"WALK"},{k:"run",e:"🏃",l:"RUN"},{k:"hiit",e:"🔥",l:"HIIT"},{k:"str",e:"💪",l:"STRENGTH"},{k:"rope",e:"🪢",l:"ROPE"},{k:"bridge",e:"🌉",l:"BRIDGE"},{k:"hand",e:"🤸",l:"HANDSTAND"},{k:"bokuto",e:"⚔️",l:"BOKUTO"},{k:"coffee",e:"☕",l:"COFFEE"},{k:"ice",e:"🧊",l:"ICEBATH"}]; // WALKはRUNの前、ICEBATHは締め。COFFEEは活動の合間のお楽しみ
+
+  // v4.10: 距離の帰属を整理 — RUNを含む日の距離は🏃、WALKだけの日は🚶として別集計。
+  // どちらでもない日（HIITだけ等）に入っている距離は個人の積み上げに足さない（矛盾防止）
+  function isRunSes(s){ return !!(s.phases&&s.phases.includes("run")); }
+  function isWalkSes(s){ return !!(s.phases&&s.phases.includes("walk")) && !isRunSes(s); }
+  function distIcon(s){ return isWalkSes(s)?"🚶":"🏃"; }
+  function sumKm(arr,f){ return Math.round(arr.filter(f).reduce((a,s)=>a+(+s.dist||0),0)*10)/10; }
 
   // ---- record-tab state ----
   let attArr=[];        // 参加者（来た人全員）
@@ -1800,7 +1820,7 @@
       if(s.winnerId) treat="<div class='hist-treat'>🏆 <span class='who'>"+esc(memberName(s.winnerId))+"</span> が "+yen(s.amount)+" 奢り</div>";
       const ph=(s.phases||["run","hiit","ice"]).map(k=>{const x=MENU.find(m=>m.k===k);return x?x.e:"";}).join("");
       // v4.5.2: ☕カフェを📍のすぐ隣へ（切れずに見える）。🕐・✍️は1行目の余白に移動して行を圧迫しない
-      const meta="📍"+esc(s.site||DEFAULT_SITE)+(s.spot?"・"+esc(s.spot):"")+(s.cafe?" ・☕"+esc(s.cafe):"")+(s.dist?" ・🏃"+s.dist+"km":"")+(s.strTags&&s.strTags.length?" ・💪"+s.strTags.map(esc).join("/"):"")+(s.guestN?" ・👤+"+s.guestN:"")+(s.hush?" ・🔒":"");
+      const meta="📍"+esc(s.site||DEFAULT_SITE)+(s.spot?"・"+esc(s.spot):"")+(s.cafe?" ・☕"+esc(s.cafe):"")+(s.dist?" ・"+distIcon(s)+s.dist+"km":"")+(s.strTags&&s.strTags.length?" ・💪"+s.strTags.map(esc).join("/"):"")+(s.guestN?" ・👤+"+s.guestN:"")+(s.hush?" ・🔒":"");
       const sub=(s.slot?"🕐"+esc(s.time||"05:30"):"")+(s.recorder?(s.slot?"・":"")+"✍️"+esc(s.recorder):"");
       el.innerHTML=
         "<div class='hist-date'><div class='d'>"+d.getDate()+"</div><div class='m'>"+(d.getMonth()+1)+"月("+WD[d.getDay()]+")</div></div>"+
@@ -1961,20 +1981,11 @@
         "<div class='lb-body'><div class='lb-name'>"+esc(m.name)+(isSpec(m)?" ⭐":"")+(m.janken===false?" <span class='cnt'>♀/子</span>":"")+"</div>"+
         (canViewAll()? "<div class='lb-sub'>参加 "+m.att+"回 ・ GOCHI累計 "+yen(m.treat)+"</div>"+
         "<div class='lb-bar'><span style='width:"+Math.round(m.att/maxAtt*100)+"%'></span></div>" : "")+"</div>"+
-        "<div class='hist-acts'><button data-rj='"+m.id+"' style='color:"+(m.janken!==false?'var(--teal)':'var(--muted2)')+"'>🥊</button><button class='e' data-rn='"+m.id+"'>✎</button><button data-rx='"+m.id+"'>✕</button></div>";
+        "<div class='hist-acts'><button class='e' data-rn='"+m.id+"'>✎</button></div>"; // v4.10: 行は✎だけに整理（🥊・削除は✎のモーダル内へ — 誤タップ防止）
       c.appendChild(el);
-    });
-    c.querySelectorAll("[data-rj]").forEach(b=>b.onclick=()=>{
-      const m=roster.find(x=>x.id===b.getAttribute("data-rj"));
-      m.janken=(m.janken===false); touchM(m); jsave(RKEY,roster); refreshAll();
-      toast(m.name+"：じゃんけん"+(m.janken!==false?"参加":"除外"));
     });
     c.querySelectorAll("[data-rn]").forEach(b=>b.onclick=()=>{
       openMemberEdit(b.getAttribute("data-rn")); // v4.9: 編集はモーダルに統一（名前・🥊・⭐・削除をひとつの画面で）
-    });
-    c.querySelectorAll("[data-rx]").forEach(b=>b.onclick=()=>{
-      const id=b.getAttribute("data-rx"); const m=roster.find(x=>x.id===id);
-      if(confirm("「"+m.name+"」を削除しますか？（過去の記録は残ります）/ Remove this member? Past records are kept.")){ tombMember(id); roster=roster.filter(x=>x.id!==id); jsave(RKEY,roster); refreshAll(); }
     });
   }
   document.getElementById("crewAddBtn").onclick=()=>{
@@ -2372,7 +2383,7 @@
     const ph=(rec.phases||[]).map(k=>{const x=MENU.find(m=>m.k===k);return x?x.e:"";}).join("");
     let t="🌅 朝活地球 | Asakatsu Earth\n"
       +(d.getMonth()+1)+"/"+d.getDate()+"("+WD[d.getDay()]+") "+(rec.time||"05:30")+"｜📍"+site+(rec.spot?"・"+rec.spot:"")+"\n"
-      +ph+" 参加 "+(names.length+(+rec.guestN||0))+"名"+(rec.guestN?"（ゲスト"+rec.guestN+"名）":"")+(rec.dist?"｜🏃"+rec.dist+"km":"")+(rec.cafe?"｜☕"+rec.cafe:"")+(rec.strTags&&rec.strTags.length?"｜💪"+rec.strTags.join("/"):"");
+      +ph+" 参加 "+(names.length+(+rec.guestN||0))+"名"+(rec.guestN?"（ゲスト"+rec.guestN+"名）":"")+(rec.dist?"｜"+distIcon(rec)+rec.dist+"km":"")+(rec.cafe?"｜☕"+rec.cafe:"")+(rec.strTags&&rec.strTags.length?"｜💪"+rec.strTags.join("/"):"");
     const withNames=t+"\n"+names.join("・");
     if(discord || withNames.length<=110) t=withNames; // X用は大人数のとき名前を省略して字数制限に収める
     if(discord){
@@ -2491,7 +2502,7 @@
   }
 
   /* ---------- マイページ ---------- */
-  let meMood=null, meCalYM=null;
+  let meMood=null, meCalYM=null, meUnlocked=false; // v4.10: meUnlocked=変更ボタンで一時的にプルダウンを出す
   function meId(){ return localStorage.getItem(MEKEY)||""; }
   function meCalShift(d){
     const base= meCalYM? parseD(meCalYM+"-01") : new Date();
@@ -2509,6 +2520,12 @@
       [...roster].sort((a,b)=>a.name<b.name?-1:1).map(m=>"<option value=\""+m.id+"\""+(m.id===cur?" selected":"")+">"+esc(m.name)+"</option>").join("");
     const me=roster.find(m=>m.id===cur);
     document.getElementById("meBody").style.display = me? "block":"none";
+    // v4.10: マイページは自分専用 — 選択済みなら名前だけ表示（他の人のページを覗く画面ではない）
+    const lockOn=!!me && !meUnlocked;
+    const wl=document.getElementById("meWhoLabel"); if(wl) wl.style.display= lockOn? "none":"";
+    sel.style.display= lockOn? "none":"";
+    const wr=document.getElementById("meWhoRow");
+    if(wr){ wr.style.display= lockOn? "flex":"none"; const wn=document.getElementById("meWhoName"); if(wn) wn.textContent= me? "👤 "+me.name : ""; }
     if(!me) return;
     const mine=sessions.filter(s=>s.attendees.includes(cur));
     document.getElementById("meTotal").textContent=mine.length;
@@ -2520,9 +2537,11 @@
     while(days.has(ymd(curD))){ n++; curD.setDate(curD.getDate()-1); }
     document.getElementById("meStreak").textContent=n;
     const treats=mine.filter(s=>s.winnerId===cur);
-    // v3.9: 距離の積み上げ（記録に距離が入っているセッションの合計）
-    const kmAll=mine.reduce((a,s)=>a+(+s.dist||0),0);
-    const kmMonth=mine.filter(s=>s.date.startsWith(ym)).reduce((a,s)=>a+(+s.dist||0),0);
+    // v4.10: 距離はRUNを含む日だけ🏃に集計、WALKだけの日は🚶に別集計（他人の別メニューの距離が混ざらない）
+    const kmAll=sumKm(mine,isRunSes);
+    const kmMonth=sumKm(mine.filter(s=>s.date.startsWith(ym)),isRunSes);
+    const wkAll=sumKm(mine,isWalkSes);
+    const wkMonth=sumKm(mine.filter(s=>s.date.startsWith(ym)),isWalkSes);
     const km1=v=>Math.round(v*10)/10;
     // v4.0: ☕ 行きつけカフェ（回数順）＋ ⭐ スペシャリスト進捗
     const myCafes={}; mine.forEach(s=>{ if(s.cafe) myCafes[s.cafe]=(myCafes[s.cafe]||0)+1; });
@@ -2532,7 +2551,8 @@
     const siteKeys=Object.keys(mySites).sort((a,b)=>mySites[b]-mySites[a]);
     const strCnt=mine.filter(s=>s.phases&&s.phases.includes("str")).length;
     document.getElementById("meTreat").innerHTML="🥊 GOCHI："+treats.length+"回 ・ 累計 "+yen(treats.reduce((a,s)=>a+(s.amount||0),0))+
-      (kmAll>0? "<br>🏃 距離：今月 "+km1(kmMonth)+"km ・ 通算 "+km1(kmAll)+"km" : "")+
+      (kmAll>0? "<br>🏃 Run：今月 "+km1(kmMonth)+"km ・ 通算 "+km1(kmAll)+"km" : "")+
+      (wkAll>0? "<br>🚶 Walk：今月 "+km1(wkMonth)+"km ・ 通算 "+km1(wkAll)+"km" : "")+
       (strCnt>0? "<br>💪 筋トレ："+strCnt+"回" : "")+
       (siteKeys.length>1? "<br>🌏 拠点："+siteKeys.length+"ヶ所 ・ "+siteKeys.slice(0,3).map(k=>esc(k)+"×"+mySites[k]).join("・") : "")+
       (cafeKeys.length? "<br>☕ カフェ："+mine.filter(s=>s.cafe).length+"回 ・ "+cafeKeys.slice(0,3).map(c=>esc(c)+"×"+myCafes[c]).join("・") : "")+
@@ -2582,7 +2602,7 @@
         const e=byDate[k]; const dd2=parseD(k);
         const where=e.ses.map(s=>esc(s.site||DEFAULT_SITE)+(s.spot?"・"+esc(s.spot):"")).join(" / ");
         const ph2=(e.ses.length? (e.ses[0].phases||[]).map(p=>{const x=MENU.find(m=>m.k===p);return x?x.e:"";}).join("") : "")
-          +(function(){ const km=e.ses.reduce((a,s)=>a+(+s.dist||0),0); return km>0? " 🏃"+(Math.round(km*10)/10)+"km" : ""; })()
+          +(function(){ const rk=sumKm(e.ses,isRunSes), wk=sumKm(e.ses,isWalkSes); return (rk>0?" 🏃"+rk+"km":"")+(wk>0?" 🚶"+wk+"km":""); })()
           +(function(){ const cs=[...new Set(e.ses.map(s=>s.cafe).filter(Boolean))]; return cs.length? " ☕"+cs.map(esc).join("・") : ""; })()
           +(function(){ const ts=[...new Set([].concat(...e.ses.map(s=>s.strTags||[])))]; return ts.length? " 💪"+ts.map(esc).join("/") : ""; })();
         return "<div class='mini' style='padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);line-height:1.55'>"+
@@ -2596,8 +2616,13 @@
   }
   document.getElementById("meCalPrev").onclick=()=>meCalShift(-1);
   document.getElementById("meCalNext").onclick=()=>meCalShift(1);
+  // v4.10: 変更は確認つき（機種変・端末共有のときだけ使う想定）
+  (function(){ const b=document.getElementById("meWhoChange"); if(b) b.onclick=function(){
+    if(!confirm("マイページは自分専用の画面です。\n機種変更や端末を共有しているとき以外は変更しないでください。\n名前を選び直しますか？")) return;
+    meUnlocked=true; renderMe();
+  }; })();
   document.getElementById("meSelect").onchange=function(){
-    localStorage.setItem(MEKEY,this.value); meMood=null; meCalYM=null;
+    localStorage.setItem(MEKEY,this.value); meMood=null; meCalYM=null; meUnlocked=false;
     const mt=document.getElementById("meMemoText"); if(mt) mt.value="";
     renderMe();
   };
@@ -2620,13 +2645,16 @@
     const t=todayStr(); const td=new Date();
     const defs=habDefs(cur);
     const km1=v=>Math.round(v*10)/10;
-    const kmToday=mine.filter(s=>s.date===t).reduce((a,s)=>a+(+s.dist||0),0);
-    const kmAll=mine.reduce((a,s)=>a+(+s.dist||0),0);
+    // v4.10: 🏃はRUNを含む日だけ・🚶はWALKだけの日を別集計
+    const todaySes=mine.filter(s=>s.date===t);
+    const kmToday=sumKm(todaySes,isRunSes), kmAll=sumKm(mine,isRunSes);
+    const wkToday=sumKm(todaySes,isWalkSes), wkAll=sumKm(mine,isWalkSes);
     let rows="";
     // v4.8: 🌅 朝活は参加記録から自動カウント（今日参加したか＋通算回数）
     const attToday=mine.some(s=>s.date===t);
     rows+="<div class='hab-line'><span class='hn'>🌅 朝活</span><span class='ht'>今日 "+(attToday?"✅":"—")+"</span><span class='hv'>通算 "+mine.length+"回</span></div>";
     if(kmAll>0||kmToday>0) rows+="<div class='hab-line'><span class='hn'>🏃 Run</span><span class='ht'>今日 "+km1(kmToday)+"km</span><span class='hv'>通算 "+km1(kmAll)+"km</span></div>";
+    if(wkAll>0||wkToday>0) rows+="<div class='hab-line'><span class='hn'>🚶 Walk</span><span class='ht'>今日 "+km1(wkToday)+"km</span><span class='hv'>通算 "+km1(wkAll)+"km</span></div>";
     defs.forEach(df=>{
       const lg=habLog(df.id,t); const tv=lg? +lg.val:0;
       const right= df.mode==="best" ? "ベスト "+habBest(df)+df.unit : "累計 "+habTotal(df)+df.unit;
@@ -2703,12 +2731,15 @@
   function habMessage(cur, me, mine){
     const t=todayStr(); const td=new Date();
     const km1=v=>Math.round(v*10)/10;
-    const kmToday=mine.filter(s=>s.date===t).reduce((a,s)=>a+(+s.dist||0),0);
-    const kmAll=mine.reduce((a,s)=>a+(+s.dist||0),0);
+    // v4.10: 🏃/🚶を別集計（カード表示と同じルール）
+    const todaySes=mine.filter(s=>s.date===t);
+    const kmToday=sumKm(todaySes,isRunSes), kmAll=sumKm(mine,isRunSes);
+    const wkToday=sumKm(todaySes,isWalkSes), wkAll=sumKm(mine,isWalkSes);
     const lines=["🔥 "+me.name+" の積み上げ｜"+td.getFullYear()+"."+(td.getMonth()+1)+"."+td.getDate()+" ("+WD[td.getDay()]+")"];
     // v4.8: 🌅 朝活は参加記録から自動カウント
     lines.push("🌅 朝活｜今日 "+(mine.some(s=>s.date===t)?"✅":"—")+"｜通算 "+mine.length+"回");
     if(kmAll>0||kmToday>0) lines.push("🏃 Run｜今日 "+km1(kmToday)+"km｜通算 "+km1(kmAll)+"km");
+    if(wkAll>0||wkToday>0) lines.push("🚶 Walk｜今日 "+km1(wkToday)+"km｜通算 "+km1(wkAll)+"km");
     habDefs(cur).forEach(df=>{
       const lg=habLog(df.id,t); const tv=lg? +lg.val:0;
       lines.push(df.name+"｜今日 "+(tv? "+"+tv+df.unit : "—")+"｜"+(df.mode==="best"? "ベスト "+habBest(df)+df.unit : "累計 "+habTotal(df)+df.unit));
@@ -2909,7 +2940,7 @@
      アプリが前面に戻ってくるたびに最新バージョンを確認。
      新しい版があれば：入力途中でなければそのまま自動リロード、
      入力途中なら壊さないように「タップで更新」バナーを出す。 */
-  const APP_VER="4.9";
+  const APP_VER="4.10";
   let lastVerCheck=Date.now(); // 起動直後は最新なのでスキップ
   function isTyping(){
     try{
