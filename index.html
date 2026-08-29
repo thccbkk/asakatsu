@@ -414,7 +414,7 @@
 
         <!-- v4.5.1: メニューに応じた入力欄は「メニュー選択の後」に出す（上から入力する流れに合わせた） -->
         <!-- 🏃🚶選択 → 距離欄 -->
-        <div id="distBox" style="display:none;margin:14px 0 0"><label class="fld">🏃🚶 距離 km（任意）— RUN/WALKの距離として記録</label><input type="number" id="sesDist" step="0.1" min="0" inputmode="decimal" placeholder="5.2"></div>
+        <div id="distBox" style="display:none;margin:14px 0 0"><div id="distRunRow"><label class="fld">🏃 Run距離 km（任意）</label><input type="number" id="sesDist" step="0.1" min="0" inputmode="decimal" placeholder="5.2"></div><div id="distWalkRow" style="margin-top:8px"><label class="fld">🚶 Walk距離 km（任意）</label><input type="number" id="sesDistW" step="0.1" min="0" inputmode="decimal" placeholder="2.0"></div></div>
         <!-- 💪 STRENGTH選択時だけ出る筋トレメニュー（散らからないよう部位チップのみ） -->
         <div id="strBox" style="display:none;margin:14px 0 0">
           <label class="fld">💪 筋トレ内容（任意）/ Strength menu</label>
@@ -692,7 +692,7 @@
     </div>
   </section>
 
-  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.10 Final 🌏</span></footer>
+  <footer>RHIR by Thcc<span class="dot">.</span> — Run. Heat. Ice. Repeat.<br><span style="opacity:.55">Asakatsu Earth v4.11 Final 🌏</span></footer>
 </div>
 
 <div id="updBar" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:99;background:var(--teal);color:#06232a;font-weight:800;padding:12px 14px;border-radius:12px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.5);cursor:pointer"></div>
@@ -1034,8 +1034,10 @@
   // どちらでもない日（HIITだけ等）に入っている距離は個人の積み上げに足さない（矛盾防止）
   function isRunSes(s){ return !!(s.phases&&s.phases.includes("run")); }
   function isWalkSes(s){ return !!(s.phases&&s.phases.includes("walk")) && !isRunSes(s); }
-  function distIcon(s){ return isWalkSes(s)?"🚶":"🏃"; }
-  function sumKm(arr,f){ return Math.round(arr.filter(f).reduce((a,s)=>a+(+s.dist||0),0)*10)/10; }
+  function runKmOf(s){ return isRunSes(s)? (+s.dist||0) : 0; }
+  function walkKmOf(s){ return (+s.distW||0) + (isWalkSes(s)? (+s.dist||0) : 0); }
+  function sumKm(arr,f){ return Math.round(arr.reduce((a,s)=>a+(f===isWalkSes? walkKmOf(s) : runKmOf(s)),0)*10)/10; }
+  function distLabel(s){ const r=Math.round(runKmOf(s)*10)/10, w=Math.round(walkKmOf(s)*10)/10; return (r>0?"🏃"+r+"km":"")+(r>0&&w>0?" ":"")+(w>0?"🚶"+w+"km":""); }
 
   // ---- record-tab state ----
   let attArr=[];        // 参加者（来た人全員）
@@ -1128,7 +1130,12 @@
     const db=document.getElementById("distBox");
     if(db){
       const dv=((document.getElementById("sesDist")||{}).value||"");
-      db.style.display=(phases.includes("run")||phases.includes("walk")||dv!=="")? "" : "none";
+      const wv=((document.getElementById("sesDistW")||{}).value||"");
+      const rOn=phases.includes("run")||dv!=="", wOn=phases.includes("walk")||wv!=="";
+      const rr=document.getElementById("distRunRow"), wr=document.getElementById("distWalkRow");
+      if(rr) rr.style.display=rOn? "" : "none";
+      if(wr) wr.style.display=wOn? "" : "none";
+      db.style.display=(rOn||wOn)? "" : "none";
     }
   }
   function renderStrChips(){
@@ -1392,6 +1399,7 @@
   }
   document.getElementById("helloHintX").onclick=()=>{ localStorage.setItem(HELLOKEY,"1"); updateHelloHint(); };
   (function(){ const i=document.getElementById("sesDist"); if(i) i.oninput=()=>updateCtxInputs(); })();
+  (function(){ const i=document.getElementById("sesDistW"); if(i) i.oninput=()=>updateCtxInputs(); })();
   document.getElementById("clearAtt").onclick=()=>{ attArr=[]; jankenArr=[]; winnerId=null; renderAtt(); renderJankenPart(); renderWinner(); };
   document.getElementById("noJanken").onclick=()=>{ winnerId=null; document.getElementById("treatAmount").value=""; renderWinner(); toast("奢りなしに設定 / No treat today"); };
 
@@ -1469,6 +1477,7 @@
       phases: phases.slice(),
       note: document.getElementById("sesNote").value.trim(),
       dist: (function(){ const v=parseFloat(document.getElementById("sesDist").value); return (isFinite(v)&&v>0)? Math.round(v*10)/10 : null; })(),
+      distW: (function(){ const v=parseFloat(document.getElementById("sesDistW").value); return (isFinite(v)&&v>0)? Math.round(v*10)/10 : null; })(),
       cafe: (function(){ const v=(document.getElementById("sesCafe").value||"").trim(); return v||null; })(),
       // v4.2: ゲスト（名簿に入れない同行者）・筋トレメニュー・🔒ひっそり記録
       guestN: (function(){ const v=parseInt(((document.getElementById("sesGuestN")||{}).value||""),10); return (isFinite(v)&&v>0)? v : null; })(),
@@ -1568,6 +1577,7 @@
     document.getElementById("treatAmount").value="";
     document.getElementById("sesNote").value="";
     document.getElementById("sesDist").value="";
+    document.getElementById("sesDistW").value="";
     document.getElementById("sesCafe").value="";
     strTags=[];
     const gn=document.getElementById("sesGuestN"); if(gn) gn.value="";
@@ -1665,6 +1675,7 @@
     document.getElementById("treatAmount").value=s.amount||"";
     document.getElementById("sesNote").value=s.note||"";
     document.getElementById("sesDist").value=s.dist||"";
+    document.getElementById("sesDistW").value=s.distW||"";
     document.getElementById("sesCafe").value=s.cafe||"";
     strTags=(s.strTags||[]).slice();
     const gn2=document.getElementById("sesGuestN"); if(gn2) gn2.value=s.guestN||"";
@@ -1820,7 +1831,7 @@
       if(s.winnerId) treat="<div class='hist-treat'>🏆 <span class='who'>"+esc(memberName(s.winnerId))+"</span> が "+yen(s.amount)+" 奢り</div>";
       const ph=(s.phases||["run","hiit","ice"]).map(k=>{const x=MENU.find(m=>m.k===k);return x?x.e:"";}).join("");
       // v4.5.2: ☕カフェを📍のすぐ隣へ（切れずに見える）。🕐・✍️は1行目の余白に移動して行を圧迫しない
-      const meta="📍"+esc(s.site||DEFAULT_SITE)+(s.spot?"・"+esc(s.spot):"")+(s.cafe?" ・☕"+esc(s.cafe):"")+(s.dist?" ・"+distIcon(s)+s.dist+"km":"")+(s.strTags&&s.strTags.length?" ・💪"+s.strTags.map(esc).join("/"):"")+(s.guestN?" ・👤+"+s.guestN:"")+(s.hush?" ・🔒":"");
+      const meta="📍"+esc(s.site||DEFAULT_SITE)+(s.spot?"・"+esc(s.spot):"")+(s.cafe?" ・☕"+esc(s.cafe):"")+(distLabel(s)?" ・"+distLabel(s):"")+(s.strTags&&s.strTags.length?" ・💪"+s.strTags.map(esc).join("/"):"")+(s.guestN?" ・👤+"+s.guestN:"")+(s.hush?" ・🔒":"");
       const sub=(s.slot?"🕐"+esc(s.time||"05:30"):"")+(s.recorder?(s.slot?"・":"")+"✍️"+esc(s.recorder):"");
       el.innerHTML=
         "<div class='hist-date'><div class='d'>"+d.getDate()+"</div><div class='m'>"+(d.getMonth()+1)+"月("+WD[d.getDay()]+")</div></div>"+
@@ -2383,7 +2394,7 @@
     const ph=(rec.phases||[]).map(k=>{const x=MENU.find(m=>m.k===k);return x?x.e:"";}).join("");
     let t="🌅 朝活地球 | Asakatsu Earth\n"
       +(d.getMonth()+1)+"/"+d.getDate()+"("+WD[d.getDay()]+") "+(rec.time||"05:30")+"｜📍"+site+(rec.spot?"・"+rec.spot:"")+"\n"
-      +ph+" 参加 "+(names.length+(+rec.guestN||0))+"名"+(rec.guestN?"（ゲスト"+rec.guestN+"名）":"")+(rec.dist?"｜"+distIcon(rec)+rec.dist+"km":"")+(rec.cafe?"｜☕"+rec.cafe:"")+(rec.strTags&&rec.strTags.length?"｜💪"+rec.strTags.join("/"):"");
+      +ph+" 参加 "+(names.length+(+rec.guestN||0))+"名"+(rec.guestN?"（ゲスト"+rec.guestN+"名）":"")+(distLabel(rec)?"｜"+distLabel(rec):"")+(rec.cafe?"｜☕"+rec.cafe:"")+(rec.strTags&&rec.strTags.length?"｜💪"+rec.strTags.join("/"):"");
     const withNames=t+"\n"+names.join("・");
     if(discord || withNames.length<=110) t=withNames; // X用は大人数のとき名前を省略して字数制限に収める
     if(discord){
@@ -2940,13 +2951,14 @@
      アプリが前面に戻ってくるたびに最新バージョンを確認。
      新しい版があれば：入力途中でなければそのまま自動リロード、
      入力途中なら壊さないように「タップで更新」バナーを出す。 */
-  const APP_VER="4.10";
+  const APP_VER="4.11";
   let lastVerCheck=Date.now(); // 起動直後は最新なのでスキップ
   function isTyping(){
     try{
       return !!editingDate || attArr.length>0 ||
         document.getElementById("sesNote").value!=="" ||
         document.getElementById("sesDist").value!=="" ||
+        document.getElementById("sesDistW").value!=="" ||
         document.getElementById("sesCafe").value!=="" ||
         document.getElementById("attSearch").value!=="" ||
         document.getElementById("sesGuestNote").value!=="" ||
